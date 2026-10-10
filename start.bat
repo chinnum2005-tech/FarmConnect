@@ -4,55 +4,23 @@ setlocal enabledelayedexpansion
 REM ====================================================================
 REM AgroTrace AI (FarmConnect) - Complete Automated Startup
 REM ====================================================================
-title AgroTrace AI - Automated Startup
-color 0E
+title AgroTrace AI - Platform Startup
+color 0A
 
 REM Ensure current working directory is always the repository root
 cd /d "%~dp0"
 
 echo.
-echo  ==================================================================
-echo     🌾 AGROTRACE AI - PLATFORM AUTOMATED STARTUP 🌾
-echo  ==================================================================
+echo ==================================================================
+echo    AGROTRACE AI - PLATFORM AUTOMATED STARTUP
+echo ==================================================================
 echo.
 
-REM 1. Verify Environment Files (.env)
 echo [1/6] Verifying Environment Configuration...
-if not exist ".env" (
-    if exist ".env.example" (
-        echo [INFO] Root .env not found. Copying .env.example...
-        copy .env.example .env >nul
-    ) else (
-        echo [WARN] Root .env and .env.example are both missing!
-    )
-)
-
-if not exist "apps\backend\.env" (
-    if exist "apps\backend\.env.example" (
-        echo [INFO] Backend .env not found. Copying .env.example...
-        copy apps\backend\.env.example apps\backend\.env >nul
-    ) else (
-        echo [WARN] Backend .env and .env.example are both missing!
-    )
-)
-
-if not exist "apps\ml-inference\.env" (
-    if exist "apps\ml-inference\.env.example" (
-        echo [INFO] AI Service .env not found. Copying .env.example...
-        copy apps\ml-inference\.env.example apps\ml-inference\.env >nul
-    ) else (
-        echo [WARN] AI Service .env and .env.example are both missing!
-    )
-)
-
-if not exist "apps\web\.env" (
-    if exist "apps\web\.env.example" (
-        echo [INFO] Web Frontend .env not found. Copying .env.example...
-        copy apps\web\.env.example apps\web\.env >nul
-    ) else (
-        echo [WARN] Web Frontend .env and .env.example are both missing!
-    )
-)
+if not exist ".env" if exist ".env.example" copy /y .env.example .env >nul
+if not exist "apps\backend\.env" if exist "apps\backend\.env.example" copy /y apps\backend\.env.example apps\backend\.env >nul
+if not exist "apps\ml-inference\.env" if exist "apps\ml-inference\.env.example" copy /y apps\ml-inference\.env.example apps\ml-inference\.env >nul
+if not exist "apps\web\.env" if exist "apps\web\.env.example" copy /y apps\web\.env.example apps\web\.env >nul
 echo [OK] Environment files verified.
 echo.
 
@@ -80,12 +48,11 @@ if errorlevel 1 (
 where node >nul 2>nul
 if errorlevel 1 (
     echo [ERROR] Node.js is not installed or not in your PATH!
-    echo Please download and install Node.js v18 or above from: https://nodejs.org/
+    echo Please install Node.js v18 or above from https://nodejs.org/
     pause
     exit /b 1
 )
-echo [OK] Node.js detected:
-node --version
+for /f "tokens=*" %%v in ('node --version 2^>nul') do echo [OK] Node.js detected: %%v
 
 REM Auto-discover Python if missing from active terminal PATH
 where python >nul 2>nul
@@ -150,130 +117,87 @@ if not exist "apps\ml-inference\requirements.txt" (
     echo [WARN] apps\ml-inference\requirements.txt not found!
     goto python_deps_done
 )
-echo [INFO] Installing/verifying Python libraries...
-python -m pip install -r apps\ml-inference\requirements.txt
+echo [INFO] Verifying Python libraries...
+python -m pip install -r apps\ml-inference\requirements.txt >nul 2>nul
 if errorlevel 1 (
-    echo [WARN] Python dependency installation failed. AI Service might fail to start.
+    echo [WARN] Python dependency check failed. AI Service might encounter issues.
 ) else (
     echo [OK] Python dependencies verified.
 )
 :python_deps_done
 echo.
 
-REM 6. Port Collision & Clean Startup
-echo [6/6] Checking Port Availability...
-set PORT_COLLISION=0
-
-netstat -ano | findstr /R /C:":8545 " >nul
-if not errorlevel 1 (
-    echo [WARN] Port 8545 is already in use! Local Hardhat Node might fail to start.
-    set PORT_COLLISION=1
-)
-netstat -ano | findstr /R /C:":3001 " >nul
-if not errorlevel 1 (
-    echo [WARN] Port 3001 is already in use! Backend API might fail to start.
-    set PORT_COLLISION=1
-)
-netstat -ano | findstr /R /C:":5173 " >nul
-if not errorlevel 1 (
-    echo [WARN] Port 5173 is already in use! Web Frontend might fail to start.
-    set PORT_COLLISION=1
-)
-if "%PYTHON_AVAILABLE%" EQU "0" (
-    netstat -ano | findstr /R /C:":8000 " >nul
-    if not errorlevel 1 (
-        echo [WARN] Port 8000 is already in use! AI Service might fail to start.
-        set PORT_COLLISION=1
-    )
-)
-
-if "%PORT_COLLISION%" EQU "1" (
-    echo [INFO] Please close applications using these ports, or modify .env configuration.
-    echo.
+REM 6. Hardhat Blockchain Node & Smart Contracts
+echo [6/6] Checking Blockchain Node & Services...
+netstat -ano -p tcp | findstr "LISTENING" | findstr ":8545" >nul
+if errorlevel 1 (
+    echo [INFO] Starting Hardhat Local Blockchain Node...
+    start "AgroTrace - Hardhat Blockchain" cmd /k "cd /d "%~dp0blockchain" && echo Starting Hardhat node on http://localhost:8545 ... && npx.cmd hardhat node"
+    ping 127.0.0.1 -n 6 >nul
 ) else (
-    echo [OK] All service ports are available!
+    echo [INFO] Hardhat Node is already active on port 8545.
+)
+
+if exist "blockchain\scripts\deploy.js" (
+    echo [INFO] Checking Smart Contract deployment to local Hardhat node...
+    cd blockchain
+    call npx.cmd hardhat run scripts/deploy.js --network localhost >nul 2>nul
+    cd ..
 )
 echo.
-
-REM Create logs directory if missing
-if not exist "logs" mkdir logs
 
 echo ==================================================================
 echo    STARTING ALL PLATFORM SERVICES IN SEPARATE WINDOWS
 echo ==================================================================
 echo.
 
-REM 1. Hardhat Blockchain Node
-echo [Service 1/4] Starting Hardhat Local Blockchain Node...
-start "AgroTrace - Hardhat Node" /D "%~dp0blockchain" cmd /k "echo Starting Hardhat node on http://localhost:8545 ... && npx.cmd hardhat node"
-
-echo [INFO] Waiting for Hardhat node to start on port 8545...
-set ATTEMPTS=0
-:wait_hardhat
-netstat -ano | findstr /R /C:":8545 " >nul
-if not errorlevel 1 goto hardhat_ready
-set /a ATTEMPTS=%ATTEMPTS%+1
-if %ATTEMPTS% GEQ 20 (
-    echo [ERROR] Hardhat Node failed to start on port 8545 within 20 seconds!
-    echo Please check the "AgroTrace - Hardhat Node" window for errors.
-    pause
-    exit /b 1
-)
-ping 127.0.0.1 -n 2 >nul
-goto wait_hardhat
-
-:hardhat_ready
-echo [OK] Hardhat Node is active.
-REM Allow brief moment for JSON-RPC provider interface to initialize
-ping 127.0.0.1 -n 3 >nul
-echo.
-
-REM 2. Deploy smart contracts
-echo [INFO] Deploying Smart Contracts to Local Hardhat Node...
-cd blockchain & call npx.cmd hardhat run scripts/deploy.js --network localhost & cd ..
+REM 1. Backend API
+netstat -ano -p tcp | findstr "LISTENING" | findstr ":3001" >nul
 if errorlevel 1 (
-    echo [WARN] Smart contract deployment failed!
-    pause
-)
-echo.
-
-REM 3. Backend API
-echo [Service 2/4] Starting Backend API Server...
-start "AgroTrace - Backend API" /D "%~dp0apps\backend" cmd /k "echo Starting backend on http://localhost:3001 ... && npm.cmd run dev"
-ping 127.0.0.1 -n 4 >nul
-
-REM 4. Web Frontend
-echo [Service 3/4] Starting Web Frontend...
-start "AgroTrace - Web Frontend" /D "%~dp0apps\web" cmd /k "echo Starting frontend on http://localhost:5173 ... && npm.cmd run dev"
-ping 127.0.0.1 -n 4 >nul
-
-REM 5. AI Service
-if "%PYTHON_AVAILABLE%" EQU "0" (
-    if exist "%~dp0apps\ml-inference\main.py" (
-        echo [Service 4/4] Starting AI Service...
-        start "AgroTrace - AI Service" /D "%~dp0apps\ml-inference" cmd /k "echo Starting AI service on http://localhost:8000 ... && python -m uvicorn main:app --host 0.0.0.0 --port 8000"
-        ping 127.0.0.1 -n 3 >nul
-    ) else (
-        echo [SKIP] AI Service source code main.py not found.
-    )
+    echo [Service 1/3] Starting Backend API Server on Port 3001...
+    start "AgroTrace - Backend API" cmd /k "cd /d "%~dp0apps\backend" && echo Starting backend on http://localhost:3001 ... && npm.cmd run dev"
+    ping 127.0.0.1 -n 3 >nul
 ) else (
-    echo [SKIP] AI Service skipped because Python is not installed.
+    echo [INFO] Backend API is already running on port 3001.
+)
+
+REM 2. Web Frontend
+netstat -ano -p tcp | findstr "LISTENING" | findstr ":5173" >nul
+if errorlevel 1 (
+    echo [Service 2/3] Starting Web Frontend on Port 5173...
+    start "AgroTrace - Web Frontend" cmd /k "cd /d "%~dp0apps\web" && echo Starting frontend on http://localhost:5173 ... && npm.cmd run dev"
+    ping 127.0.0.1 -n 3 >nul
+) else (
+    echo [INFO] Web Frontend is already running on port 5173.
+)
+
+REM 3. AI Service
+if "%PYTHON_AVAILABLE%" EQU "0" (
+    if exist "apps\ml-inference\main.py" (
+        netstat -ano -p tcp | findstr "LISTENING" | findstr ":8000" >nul
+        if errorlevel 1 (
+            echo [Service 3/3] Starting AI Inference Service on Port 8000...
+            start "AgroTrace - AI Service" cmd /k "cd /d "%~dp0apps\ml-inference" && echo Starting AI service on http://localhost:8000 ... && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+        ) else (
+            echo [INFO] AI Inference Service is already running on port 8000.
+        )
+    )
 )
 
 echo.
 echo ==================================================================
-echo    ALL SERVICES LAUNCHED SUCCESSFULLY!
+echo    ALL AGROTRACE SERVICES ARE ACTIVE AND RUNNING!
 echo ==================================================================
 echo.
-echo Access URLs:
-echo   - 💻 Web Frontend:  http://localhost:5173
-echo   - ⚙️ Backend API:   http://localhost:3001
-echo   - 🧠 AI Service:    http://localhost:8000
-echo   - ⛓️ Hardhat Node:  http://localhost:8545
+echo  Access URLs:
+echo    - Web Frontend:     http://localhost:5173
+echo    - Backend API:      http://localhost:3001
+echo    - AI ML Service:    http://localhost:8000
+echo    - Hardhat Node:     http://localhost:8545
 echo.
-echo Quick Actions:
-echo   - Close this console to finish the startup guide.
-echo   - To stop all services at once, run: stop.bat
-echo   - To stop any individual service, press Ctrl+C in its respective window.
+echo  Instructions:
+echo    - Keep the service terminal windows open while using the app.
+echo    - To stop all services at once, run: stop.bat
+echo    - To stop any individual service, press Ctrl+C in its respective window.
 echo.
 pause

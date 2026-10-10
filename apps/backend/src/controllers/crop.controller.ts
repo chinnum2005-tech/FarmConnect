@@ -133,14 +133,23 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
       throw new AppError(`Insufficient land area. You only have ${remainingHectares > "0" ? remainingHectares : "0"} hectares available on your farm.`, 400);
     }
 
-    const field = await prisma.field.findFirst({
+    let field = await prisma.field.findFirst({
       where: { farmId: farm.id },
       orderBy: { createdAt: 'asc' }
     });
 
     if (!field) {
-      throw new AppError('No field found. Please setup a Field on the dashboard first.', 400);
+      // Auto-provision default field for seamless crop creation
+      field = await prisma.field.create({
+        data: {
+          name: 'Main Field',
+          farmId: farm.id,
+          polygon: { type: 'Point', coordinates: [0, 0] },
+        }
+      });
     }
+
+    const { estimatedYield } = req.body;
 
     const crop = await prisma.crop.create({
       data: {
@@ -149,9 +158,10 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
         variety,
         plantingDate,
         expectedHarvest,
-        area,
+        area: Number(area),
         farmId: farm.id,
         fieldId: field.id,
+        estimatedYield: estimatedYield ? Number(estimatedYield) : undefined,
       },
     });
 

@@ -6,7 +6,7 @@ import {
   getAllEvents,
   getMyProductEvents,
 } from '../controllers/supplyChain.controller';
-import { authenticate } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
@@ -18,6 +18,6 @@ router.get('/all', getAllEvents); // For Blockchain Explorer (supports ?search=&
 // Protected routes
 router.use(authenticate);
 router.get('/my-products', getMyProductEvents);
-router.post('/add', addSupplyChainEvent);
+router.post('/add', authorize('FARMER', 'DISTRIBUTOR', 'ADMIN'), addSupplyChainEvent);
 
 export default router;

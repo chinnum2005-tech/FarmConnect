@@ -63,3 +63,17 @@ ENV/
 artifacts/
 cache/
 typechain-types/
+
+# Local Audit Reports & Patches
+*_report.md
+scratch/*.patch
+
+# Maintenance Scripts
+apps/backend/reset-passwords.js
+
+# Blockchain build outputs
+services/blockchain/scripts/deploy-provenance.js
+services/blockchain/scripts/deploy-provenance.js.map
+services/blockchain/scripts/deploy-provenance.d.ts
+services/blockchain/scripts/deploy-provenance.d.ts.map
+

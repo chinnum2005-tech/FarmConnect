@@ -1,0 +1,545 @@
+﻿--- BACKEND SRC ---
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\config
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\config\msp.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\auth.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\cart.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\chatbot.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\crop.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\farm.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\field.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\market.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\order.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\product.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\shipment.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\supplyChain.controller.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\controllers\verify.controller.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\database
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\database\prisma.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\jobs
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\jobs\priceSnapshot.job.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\auditLogger.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\auth.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\errorHandler.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\requestId.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\roleCheck.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\security.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\middleware\validator.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\admin.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\auth.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\cart.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\chat.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\crop.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\farm.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\field.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\market.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\ndvi.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\order.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\prediction.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\product.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\qrRoutes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\recommendation.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\shipment.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\supplyChain.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\verify.routes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\routes\weather.routes.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\scripts\backfillLegacyHashes.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\scripts\fix-area-data.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\scripts\seedProductionReady.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\scripts\testFailurePath.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\server.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\agmarknet.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\blockchain.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\chatbot.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\ingestion.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\ml.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\provenance.service.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\provenanceListener.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\services\qrService.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\validators
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\backend\src\validators\schemas.ts
+--- WEB SRC ---
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\AdminRoutes.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\App.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\AdminLayout.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\AnalyticsChart.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\BlockchainBadge.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Button.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Card.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\charts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\charts\AnalyticsChart.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\charts\StatCard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ConflictResolutionModal.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\CropRecommendationCard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\DemoModeToggle.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ErrorBoundary.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\FarmerOnboardingWizard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\FarmWindBackground.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\FarmWindBackgroundCSS.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\FieldSetupModal.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\GlobalSearch.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\LanguageSelector.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\layout
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\layout\MainLayout.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Navbar.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\NdviHealthSection.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\NetworkStatus.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\NotificationBell.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\PDFReportButton.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\PricePrediction.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ProtectedRoute.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Sidebar.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Skeleton.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\SoilSetupModal.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\SupplyChainMap.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Timeline.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\Toast.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui\EnhancedHero.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui\Hero.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui\MacDock.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui\SectionWrapper.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\ui\ThemeToggle.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\components\WeatherWidget.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\contexts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\contexts\AuthContext.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\contexts\NotificationContext.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\contexts\ThemeContext.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\bn.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\config.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\en.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\gu.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\hi.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\kn.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\ml.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\mr.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\or.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\pa.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\ta.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\i18n\te.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\index.css
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\main.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\AnalyticsPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\Dashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\FarmsPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\ProductsPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\SettingsPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\UsersPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\admin\VerificationPage.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\AdminDashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\AdminDashboardNew.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\api
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\api\chat.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\BlockchainExplorer.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Chatbot.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Crops.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\DarkDashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Dashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\DiseaseDetection.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\DistributorDashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\FarmerDashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\FarmerDashboardNew.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\FarmGallery.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Farms.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Landing.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Login.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\MapDemo.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Marketplace.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\ProductTrace.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\ProductTracePro.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Profile.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\SupplyChain.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\SupplyChainDashboard.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\Verify.tsx
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\pages\WeatherIntelligence.tsx
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\api.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\authService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\cartService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\cropService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\farmService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\fieldService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\index.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\marketService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\orderService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\predictionService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\productService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\shipmentService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\soilIntelligenceService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\supplyChainService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\services\verifyService.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\types.ts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\utils
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\apps\web\src\utils\apiRetry.ts
+--- PRISMA PACKAGE ---
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\.env
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\DIAGRAM.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718000000_init
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718000000_init\migration.sql
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718000001_add_prediction_provenance
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718000001_add_prediction_provenance\migration.sql
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718142750_add_weather_ndvi_provenance
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260718142750_add_weather_ndvi_provenance\migration.sql
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260720045222_add_price_rating_to_product
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260720045222_add_price_rating_to_product\migration.sql
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260724193601_add_version_optimistic_locking
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\20260724193601_add_version_optimistic_locking\migration.sql
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\migrations\migration_lock.toml
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.bin
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.bin\prisma
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.bin\prisma.cmd
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.bin\prisma.ps1
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine.gz.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine.gz.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine.sha256
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\edge.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\query_engine-windows.dll.node
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\edge-esm.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\index-browser.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\library.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\runtime\library.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\.prisma\client\schema.prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\edge.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\extension.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\extension.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\generator-build
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\generator-build\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\binary.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\binary.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\edge-esm.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\index-browser.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\library.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\library.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\runtime\query-engine.wasm
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\colors.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\default-deno-edge.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\default-edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\default-index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\default-index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\default-index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\get-packed-client.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\postinstall.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\client\scripts\postinstall.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\chunk-VBXJIVYU.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\types.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\types.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\util.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\dist\util.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\debug\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\index.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\scripts\localinstall.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\scripts\localinstall.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\scripts\postinstall.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\dist\scripts\postinstall.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\LICENSE
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine.gz.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\libquery-engine.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine.gz.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\node_modules\.cache\prisma\master\79fb5193cf0a8fdbef536e4b4a159cad677ab1b9\windows\schema-engine.sha256
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\query_engine-windows.dll.node
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\README.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\schema-engine-windows.exe
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines\scripts\postinstall.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\engines-version\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\BinaryType.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\BinaryType.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chmodPlusX.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chmodPlusX.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-6RVB6NYU.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-BXUPHLWW.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-CWGQAQ3T.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-FDMUWNGX.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-FGSIHYWK.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-JLJWRMAC.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-PQIJMNJM.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-Q7UG36US.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-QVKNF2OV.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-VBXJIVYU.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-VWQSWYHC.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-X37PZICB.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\chunk-XN5OP4F2.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\cleanupCache.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\cleanupCache.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\download.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\download.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\downloadZip.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\downloadZip.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\env.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\env.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\getHash.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\getHash.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\getProxyAgent.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\getProxyAgent.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\log.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\log.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\utils.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\dist\utils.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\fetch-engine\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\assertNodeAPISupported.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\assertNodeAPISupported.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-6HZWON4S.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-ATMXZBUA.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-FMZMOYZE.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-L4VWERKP.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-LVABMATQ.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-NRBYW3FO.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-O5EOXX3N.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-SD2UGOOM.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-UPBZT3NW.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-XC47443Z.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\chunk-XFO73BBC.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\getNodeAPIName.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\getNodeAPIName.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\getPlatform.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\getPlatform.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\link.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\link.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\logger.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\logger.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\platforms.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\platforms.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\jestContext.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\jestContext.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\jestSnapshotSerializer.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\platformRegex.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\dist\test-utils\platformRegex.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\@prisma\get-platform\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\child.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\prisma_schema_build_bg.wasm
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\alert.60ea9f84.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\array.1a36c222.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\boolean.9188b434.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\chevron-down.24f76e3c.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\cross.c2610cf5.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\datetime.a3bf710a.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\download.8d34b65a.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\ellipsis.a8c5a34a.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\enum.7ec0b64c.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\folder.d77b8eaf.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\hamburger.5fdadeac.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-all-400-normal.4c1f8a0d.woff
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-all-600-normal.d0a7c8a9.woff
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-cyrillic-400-normal.ac97a49e.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-cyrillic-600-normal.2c917f10.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-cyrillic-ext-400-normal.f21a6a97.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-cyrillic-ext-600-normal.bb31f197.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-greek-400-normal.e9163df8.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-greek-600-normal.e644d70f.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-greek-ext-400-normal.43addcc8.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-greek-ext-600-normal.7f437016.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-latin-400-normal.27ae72da.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-latin-600-normal.87d718a2.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-latin-ext-400-normal.5b02c69a.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-latin-ext-600-normal.88feb9e4.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\inter-vietnamese-600-normal.8185dacd.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\jetbrains-mono-all-400-normal.f86807b7.woff
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\jetbrains-mono-cyrillic-400-normal.1ae57fe2.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\jetbrains-mono-latin-400-normal.80a5dc9e.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\jetbrains-mono-latin-ext-400-normal.6315c53c.woff2
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\logotype.a960b169.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\number.85ddf96b.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\object.0ba944a6.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\play.8811691e.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\plus.8fbf7ad3.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\refresh.d5448ccc.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\search.2ed766ce.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\settings.5ad25af2.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\string.ea615a24.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\tick.8cbb6a93.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\tick-indeterminate.aec8a44d.svg
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\assets\vendor.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\favicon.svg
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\http
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\http\databrowser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\http\splash.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\icon-1024.png
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\index.css
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\pages
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\pages\http
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\pages\http\databrowser.html
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\public\pages\http\splash.html
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\build\xdg-open
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\LICENSE
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\package.json
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\preinstall
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\preinstall\index.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\edge.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\extension.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\extension.js
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\generator-build
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\generator-build\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\binary.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\binary.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\edge-esm.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\index-browser.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\library.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\library.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\runtime\query-engine.wasm
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\colors.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\default-deno-edge.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\default-edge.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\default-index.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\default-index.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\default-index-browser.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\get-packed-client.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\postinstall.d.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\prisma-client\scripts\postinstall.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\query_engine-windows.dll.node
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\README.md
+[DIR] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\scripts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\node_modules\prisma\scripts\preinstall-entry.js
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\QUICK_REFERENCE.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\README.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\schema.prisma
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\SCHEMA_DOCS.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\seed.ts
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\packages\prisma\tsconfig.json
+--- BLOCKCHAIN CONTRACTS ---
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\blockchain\contracts\Traceability.sol
+--- AI SERVICE ---
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\.env
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\.env.example
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\__pycache__
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\__pycache__\main.cpython-311.pyc
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\crop_advisor.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\crop_advisor_encoder.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\district_weather_cache.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\fertilizer_advisor.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\fertilizer_advisor_encoders.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\gee_ndvi_cache.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\n600_significance_report.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\real_ndvi_evaluation.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\sentinel_ndvi_cache.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\statistical_significance_report.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\yield_predictor_base.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\data\yield_predictor_fusion.joblib
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\Dockerfile
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\IMPLEMENTATION_SUMMARY.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\main.py
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\__pycache__
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\__pycache__\crop_advisor.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\__pycache__\disease_predictor.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\__pycache__\fertilizer_advisor.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\__pycache__\yield_predictor.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\crop_advisor.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\disease_predictor.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\fertilizer_advisor.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\models\yield_predictor.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\package.json
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\QUICKSTART.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\README.md
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\requirements.txt
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts\__pycache__
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts\__pycache__\compare_ndvi_real.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts\compare_ndvi_real.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts\fetch_historical_weather.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\scripts\statistical_analysis.py
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services
+[DIR] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services\__pycache__
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services\__pycache__\satellite_ndvi.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services\__pycache__\weather_backfill.cpython-311.pyc
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services\satellite_ndvi.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\services\weather_backfill.py
+  [FILE] C:\Users\chinn\Desktop\AgroTrace\services\ai-service\test_model.py

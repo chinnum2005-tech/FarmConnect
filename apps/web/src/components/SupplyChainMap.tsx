@@ -95,7 +95,17 @@ const truckIcon = new L.DivIcon({
 });
 
 // Component that manages its own RAF loop to move the marker without triggering React renders
-function AnimatedTruck({ pathCoordinates, isPlaying, speed }: { pathCoordinates: [number, number][], isPlaying: boolean, speed: number }) {
+function AnimatedTruck({ 
+  pathCoordinates, 
+  isPlaying, 
+  speed,
+  snapTarget
+}: { 
+  pathCoordinates: [number, number][]; 
+  isPlaying: boolean; 
+  speed: number;
+  snapTarget?: { index: number; trigger: number } | null;
+}) {
   const markerRef = useRef<L.Marker>(null);
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>();
@@ -105,32 +115,52 @@ function AnimatedTruck({ pathCoordinates, isPlaying, speed }: { pathCoordinates:
     progress: 0 // 0 to 1
   });
 
+  // Handle snap-to-checkpoint immediately
+  useEffect(() => {
+    if (snapTarget && snapTarget.index >= 0 && snapTarget.index < pathCoordinates.length) {
+      const idx = snapTarget.index;
+      if (idx >= pathCoordinates.length - 1) {
+        stateRef.current.currentSegment = Math.max(0, pathCoordinates.length - 2);
+        stateRef.current.progress = 1.0;
+      } else {
+        stateRef.current.currentSegment = idx;
+        stateRef.current.progress = 0.0;
+      }
+      if (markerRef.current) {
+        markerRef.current.setLatLng(pathCoordinates[idx]);
+      }
+    }
+  }, [snapTarget, pathCoordinates]);
+
   const animate = useCallback((time: number) => {
     if (!lastTimeRef.current) lastTimeRef.current = time;
-    const deltaTime = time - lastTimeRef.current;
+    const deltaTime = Math.min(time - lastTimeRef.current, 100); // Cap frame delta to prevent high-speed overshoots
     lastTimeRef.current = time;
 
     if (isPlaying && pathCoordinates.length > 1) {
       const state = stateRef.current;
-      const speedFactor = 0.0004 * speed; 
+      const speedFactor = 0.0003 * speed; 
       state.progress += deltaTime * speedFactor;
 
-      if (state.progress >= 1) {
-        state.progress = 0;
+      // Handle multi-segment advancement smoothly when running at 5x speed
+      while (state.progress >= 1) {
+        state.progress -= 1;
         state.currentSegment++;
         if (state.currentSegment >= pathCoordinates.length - 1) {
-          state.currentSegment = 0; // Loop back to start
+          state.currentSegment = 0; // Loop smoothly to start
         }
       }
 
       const p1 = pathCoordinates[state.currentSegment];
       const p2 = pathCoordinates[state.currentSegment + 1];
       
-      const lat = p1[0] + (p2[0] - p1[0]) * state.progress;
-      const lng = p1[1] + (p2[1] - p1[1]) * state.progress;
+      if (p1 && p2) {
+        const lat = p1[0] + (p2[0] - p1[0]) * state.progress;
+        const lng = p1[1] + (p2[1] - p1[1]) * state.progress;
 
-      if (markerRef.current) {
-        markerRef.current.setLatLng([lat, lng]);
+        if (markerRef.current) {
+          markerRef.current.setLatLng([lat, lng]);
+        }
       }
     }
     
@@ -164,6 +194,7 @@ export default function SupplyChainMap({ productId, height = '400px' }: SupplyCh
   // Animation state
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
+  const [snapTarget, setSnapTarget] = useState<{ index: number; trigger: number } | null>(null);
 
   useEffect(() => {
     if (productId) {
@@ -274,14 +305,20 @@ export default function SupplyChainMap({ productId, height = '400px' }: SupplyCh
             pathCoordinates={pathCoordinates} 
             isPlaying={isPlaying} 
             speed={speed} 
+            snapTarget={snapTarget}
           />
         )}
 
-        {eventsWithCoordinates.map((event) => (
+        {eventsWithCoordinates.map((event, index) => (
           <Marker
             key={event.id}
             position={[event.latitude || 0, event.longitude || 0]}
             icon={getEventIcon(event.title)}
+            eventHandlers={{
+              click: () => {
+                setSnapTarget({ index, trigger: Date.now() });
+              }
+            }}
           >
             <Popup>
               <div className="p-2">
@@ -290,9 +327,16 @@ export default function SupplyChainMap({ productId, height = '400px' }: SupplyCh
                   <MapPin className="inline w-3 h-3 mr-1" />
                   {event.location}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 mb-2">
                   {new Date(event.timestamp).toLocaleDateString()}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setSnapTarget({ index, trigger: Date.now() })}
+                  className="px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition"
+                >
+                  Snap Truck Here 🚚
+                </button>
               </div>
             </Popup>
           </Marker>

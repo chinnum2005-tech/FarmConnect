@@ -1,0 +1,1694 @@
+[
+  {
+    "path": ".env",
+    "size": 2203
+  },
+  {
+    "path": ".env.example",
+    "size": 1889
+  },
+  {
+    "path": ".gitattributes",
+    "size": 46
+  },
+  {
+    "path": ".gitignore",
+    "size": 595
+  },
+  {
+    "path": ".renderignore",
+    "size": 171
+  },
+  {
+    "path": "agrotrace_folder_report.pdf",
+    "size": 1884720
+  },
+  {
+    "path": "agrotrace_folder_report.txt",
+    "size": 4456702
+  },
+  {
+    "path": "folder_report.ipynb",
+    "size": 6202
+  },
+  {
+    "path": "generate_agrotrace_report.py",
+    "size": 4712
+  },
+  {
+    "path": "generate_detailed_explanation_pdf.py",
+    "size": 9879
+  },
+  {
+    "path": "render.yaml",
+    "size": 2598
+  },
+  {
+    "path": "start.bat",
+    "size": 4209
+  },
+  {
+    "path": "start.ps1",
+    "size": 4599
+  },
+  {
+    "path": "structure_summary.txt",
+    "size": 53703
+  },
+  {
+    "path": "apps/backend/.env",
+    "size": 746
+  },
+  {
+    "path": "apps/backend/.env.example",
+    "size": 1992
+  },
+  {
+    "path": "apps/backend/API_DOCS.md",
+    "size": 13169
+  },
+  {
+    "path": "apps/backend/backend_dev_log.txt",
+    "size": 368
+  },
+  {
+    "path": "apps/backend/check-all.js",
+    "size": 320
+  },
+  {
+    "path": "apps/backend/check-users.js",
+    "size": 355
+  },
+  {
+    "path": "apps/backend/cleanup-events.js",
+    "size": 852
+  },
+  {
+    "path": "apps/backend/count-events.js",
+    "size": 419
+  },
+  {
+    "path": "apps/backend/Dockerfile",
+    "size": 294
+  },
+  {
+    "path": "apps/backend/IMPLEMENTATION_SUMMARY.md",
+    "size": 13865
+  },
+  {
+    "path": "apps/backend/package.json",
+    "size": 1611
+  },
+  {
+    "path": "apps/backend/QUICKSTART.md",
+    "size": 5177
+  },
+  {
+    "path": "apps/backend/README.md",
+    "size": 10286
+  },
+  {
+    "path": "apps/backend/scratch.js",
+    "size": 288
+  },
+  {
+    "path": "apps/backend/sync-shipments.js",
+    "size": 491
+  },
+  {
+    "path": "apps/backend/test-blockchain.js",
+    "size": 350
+  },
+  {
+    "path": "apps/backend/test-blockchain.ts",
+    "size": 1842
+  },
+  {
+    "path": "apps/backend/test-chatbot.ts",
+    "size": 2370
+  },
+  {
+    "path": "apps/backend/test-db.js",
+    "size": 427
+  },
+  {
+    "path": "apps/backend/test-endpoints.js",
+    "size": 1574
+  },
+  {
+    "path": "apps/backend/test-get-my-shipments-exact.js",
+    "size": 1965
+  },
+  {
+    "path": "apps/backend/test-get-my-shipments.js",
+    "size": 1959
+  },
+  {
+    "path": "apps/backend/test-get-shipments.js",
+    "size": 1741
+  },
+  {
+    "path": "apps/backend/test-provenance.ts",
+    "size": 6109
+  },
+  {
+    "path": "apps/backend/test-shipments.js",
+    "size": 450
+  },
+  {
+    "path": "apps/backend/test.js",
+    "size": 298
+  },
+  {
+    "path": "apps/backend/test_direct.js",
+    "size": 469
+  },
+  {
+    "path": "apps/backend/tsconfig.json",
+    "size": 636
+  },
+  {
+    "path": "apps/backend/scratch/test_pipeline.ts",
+    "size": 2158
+  },
+  {
+    "path": "apps/backend/scripts/migrate_crop_area.ts",
+    "size": 1371
+  },
+  {
+    "path": "apps/backend/scripts/migration_state.json",
+    "size": 315
+  },
+  {
+    "path": "apps/backend/src/server.ts",
+    "size": 5578
+  },
+  {
+    "path": "apps/backend/src/config/msp.ts",
+    "size": 731
+  },
+  {
+    "path": "apps/backend/src/controllers/auth.controller.ts",
+    "size": 8841
+  },
+  {
+    "path": "apps/backend/src/controllers/cart.controller.ts",
+    "size": 6632
+  },
+  {
+    "path": "apps/backend/src/controllers/chatbot.controller.ts",
+    "size": 1748
+  },
+  {
+    "path": "apps/backend/src/controllers/crop.controller.ts",
+    "size": 9801
+  },
+  {
+    "path": "apps/backend/src/controllers/farm.controller.ts",
+    "size": 11043
+  },
+  {
+    "path": "apps/backend/src/controllers/field.controller.ts",
+    "size": 3315
+  },
+  {
+    "path": "apps/backend/src/controllers/market.controller.ts",
+    "size": 10897
+  },
+  {
+    "path": "apps/backend/src/controllers/order.controller.ts",
+    "size": 11764
+  },
+  {
+    "path": "apps/backend/src/controllers/product.controller.ts",
+    "size": 4662
+  },
+  {
+    "path": "apps/backend/src/controllers/shipment.controller.ts",
+    "size": 9282
+  },
+  {
+    "path": "apps/backend/src/controllers/supplyChain.controller.ts",
+    "size": 10935
+  },
+  {
+    "path": "apps/backend/src/controllers/verify.controller.ts",
+    "size": 5366
+  },
+  {
+    "path": "apps/backend/src/database/prisma.ts",
+    "size": 373
+  },
+  {
+    "path": "apps/backend/src/jobs/priceSnapshot.job.ts",
+    "size": 2329
+  },
+  {
+    "path": "apps/backend/src/middleware/auditLogger.ts",
+    "size": 1627
+  },
+  {
+    "path": "apps/backend/src/middleware/auth.ts",
+    "size": 1550
+  },
+  {
+    "path": "apps/backend/src/middleware/errorHandler.ts",
+    "size": 944
+  },
+  {
+    "path": "apps/backend/src/middleware/requestId.ts",
+    "size": 459
+  },
+  {
+    "path": "apps/backend/src/middleware/roleCheck.ts",
+    "size": 2866
+  },
+  {
+    "path": "apps/backend/src/middleware/security.ts",
+    "size": 1911
+  },
+  {
+    "path": "apps/backend/src/middleware/validator.ts",
+    "size": 1247
+  },
+  {
+    "path": "apps/backend/src/routes/admin.routes.ts",
+    "size": 5931
+  },
+  {
+    "path": "apps/backend/src/routes/auth.routes.ts",
+    "size": 2407
+  },
+  {
+    "path": "apps/backend/src/routes/cart.routes.ts",
+    "size": 558
+  },
+  {
+    "path": "apps/backend/src/routes/chat.routes.ts",
+    "size": 320
+  },
+  {
+    "path": "apps/backend/src/routes/crop.routes.ts",
+    "size": 1047
+  },
+  {
+    "path": "apps/backend/src/routes/farm.routes.ts",
+    "size": 997
+  },
+  {
+    "path": "apps/backend/src/routes/field.routes.ts",
+    "size": 562
+  },
+  {
+    "path": "apps/backend/src/routes/market.routes.ts",
+    "size": 260
+  },
+  {
+    "path": "apps/backend/src/routes/ndvi.routes.ts",
+    "size": 9704
+  },
+  {
+    "path": "apps/backend/src/routes/order.routes.ts",
+    "size": 783
+  },
+  {
+    "path": "apps/backend/src/routes/prediction.routes.ts",
+    "size": 10520
+  },
+  {
+    "path": "apps/backend/src/routes/product.routes.ts",
+    "size": 580
+  },
+  {
+    "path": "apps/backend/src/routes/qrRoutes.ts",
+    "size": 2535
+  },
+  {
+    "path": "apps/backend/src/routes/recommendation.routes.ts",
+    "size": 5250
+  },
+  {
+    "path": "apps/backend/src/routes/shipment.routes.ts",
+    "size": 699
+  },
+  {
+    "path": "apps/backend/src/routes/supplyChain.routes.ts",
+    "size": 725
+  },
+  {
+    "path": "apps/backend/src/routes/verify.routes.ts",
+    "size": 419
+  },
+  {
+    "path": "apps/backend/src/routes/weather.routes.ts",
+    "size": 3335
+  },
+  {
+    "path": "apps/backend/src/scripts/backfillLegacyHashes.ts",
+    "size": 1958
+  },
+  {
+    "path": "apps/backend/src/scripts/fix-area-data.ts",
+    "size": 2083
+  },
+  {
+    "path": "apps/backend/src/scripts/seedProductionReady.ts",
+    "size": 4474
+  },
+  {
+    "path": "apps/backend/src/scripts/testFailurePath.ts",
+    "size": 1767
+  },
+  {
+    "path": "apps/backend/src/services/agmarknet.service.ts",
+    "size": 1966
+  },
+  {
+    "path": "apps/backend/src/services/blockchain.service.ts",
+    "size": 5218
+  },
+  {
+    "path": "apps/backend/src/services/chatbot.service.ts",
+    "size": 5409
+  },
+  {
+    "path": "apps/backend/src/services/ingestion.service.ts",
+    "size": 1960
+  },
+  {
+    "path": "apps/backend/src/services/ml.service.ts",
+    "size": 3116
+  },
+  {
+    "path": "apps/backend/src/services/provenance.service.ts",
+    "size": 6896
+  },
+  {
+    "path": "apps/backend/src/services/provenanceListener.ts",
+    "size": 2936
+  },
+  {
+    "path": "apps/backend/src/services/qrService.ts",
+    "size": 1358
+  },
+  {
+    "path": "apps/backend/src/validators/schemas.ts",
+    "size": 2985
+  },
+  {
+    "path": "apps/ml-inference/main.py",
+    "size": 940
+  },
+  {
+    "path": "apps/ml-inference/requirements.txt",
+    "size": 154
+  },
+  {
+    "path": "apps/ml-inference/models/crop_label_encoder.pkl",
+    "size": 829
+  },
+  {
+    "path": "apps/ml-inference/models/crop_rec_model.pkl",
+    "size": 1898307
+  },
+  {
+    "path": "apps/ml-inference/models/yield_model.pkl",
+    "size": 280092
+  },
+  {
+    "path": "apps/ml-inference/routers/disease.py",
+    "size": 1682
+  },
+  {
+    "path": "apps/ml-inference/routers/health.py",
+    "size": 2278
+  },
+  {
+    "path": "apps/ml-inference/routers/prediction.py",
+    "size": 2057
+  },
+  {
+    "path": "apps/ml-inference/routers/rag.py",
+    "size": 835
+  },
+  {
+    "path": "apps/ml-inference/routers/recommendation.py",
+    "size": 1464
+  },
+  {
+    "path": "apps/ml-inference/scratch/test_prediction.py",
+    "size": 876
+  },
+  {
+    "path": "apps/ml-inference/scripts/generate_synthetic_data.py",
+    "size": 5340
+  },
+  {
+    "path": "apps/ml-inference/scripts/synthetic_yield_data.csv",
+    "size": 207247
+  },
+  {
+    "path": "apps/ml-inference/scripts/train_crop_rec.py",
+    "size": 1969
+  },
+  {
+    "path": "apps/ml-inference/services/disease_service.py",
+    "size": 9097
+  },
+  {
+    "path": "apps/ml-inference/services/ndvi_service.py",
+    "size": 2504
+  },
+  {
+    "path": "apps/ml-inference/services/rag_service.py",
+    "size": 3976
+  },
+  {
+    "path": "apps/ml-inference/services/recommend_service.py",
+    "size": 1794
+  },
+  {
+    "path": "apps/ml-inference/services/yield_service.py",
+    "size": 4216
+  },
+  {
+    "path": "apps/mobile/.gitignore",
+    "size": 687
+  },
+  {
+    "path": "apps/mobile/pubspec.yaml",
+    "size": 930
+  },
+  {
+    "path": "apps/mobile/lib/main.dart",
+    "size": 1187
+  },
+  {
+    "path": "apps/mobile/lib/screens/farm_register_screen.dart",
+    "size": 3295
+  },
+  {
+    "path": "apps/mobile/lib/screens/home_screen.dart",
+    "size": 6713
+  },
+  {
+    "path": "apps/mobile/lib/screens/login_screen.dart",
+    "size": 3129
+  },
+  {
+    "path": "apps/mobile/lib/screens/qr_scanner_screen.dart",
+    "size": 3368
+  },
+  {
+    "path": "apps/mobile/lib/services/auth_service.dart",
+    "size": 763
+  },
+  {
+    "path": "apps/web/.env",
+    "size": 39
+  },
+  {
+    "path": "apps/web/.env.example",
+    "size": 204
+  },
+  {
+    "path": "apps/web/Dockerfile",
+    "size": 182
+  },
+  {
+    "path": "apps/web/index.html",
+    "size": 2065
+  },
+  {
+    "path": "apps/web/package.json",
+    "size": 1627
+  },
+  {
+    "path": "apps/web/postcss.config.js",
+    "size": 86
+  },
+  {
+    "path": "apps/web/tailwind.config.js",
+    "size": 1777
+  },
+  {
+    "path": "apps/web/vite.config.ts",
+    "size": 223
+  },
+  {
+    "path": "apps/web/public/manifest.json",
+    "size": 704
+  },
+  {
+    "path": "apps/web/public/robots.txt",
+    "size": 206
+  },
+  {
+    "path": "apps/web/public/sw.js",
+    "size": 2440
+  },
+  {
+    "path": "apps/web/src/AdminRoutes.tsx",
+    "size": 1066
+  },
+  {
+    "path": "apps/web/src/App.tsx",
+    "size": 9912
+  },
+  {
+    "path": "apps/web/src/index.css",
+    "size": 5164
+  },
+  {
+    "path": "apps/web/src/main.tsx",
+    "size": 629
+  },
+  {
+    "path": "apps/web/src/types.ts",
+    "size": 1143
+  },
+  {
+    "path": "apps/web/src/components/AdminLayout.tsx",
+    "size": 8423
+  },
+  {
+    "path": "apps/web/src/components/AnalyticsChart.tsx",
+    "size": 7761
+  },
+  {
+    "path": "apps/web/src/components/BlockchainBadge.tsx",
+    "size": 1226
+  },
+  {
+    "path": "apps/web/src/components/Button.tsx",
+    "size": 2624
+  },
+  {
+    "path": "apps/web/src/components/Card.tsx",
+    "size": 1014
+  },
+  {
+    "path": "apps/web/src/components/ConflictResolutionModal.tsx",
+    "size": 5879
+  },
+  {
+    "path": "apps/web/src/components/CropRecommendationCard.tsx",
+    "size": 10644
+  },
+  {
+    "path": "apps/web/src/components/DemoModeToggle.tsx",
+    "size": 4176
+  },
+  {
+    "path": "apps/web/src/components/ErrorBoundary.tsx",
+    "size": 3678
+  },
+  {
+    "path": "apps/web/src/components/FarmerOnboardingWizard.tsx",
+    "size": 41176
+  },
+  {
+    "path": "apps/web/src/components/FarmWindBackground.tsx",
+    "size": 12017
+  },
+  {
+    "path": "apps/web/src/components/FarmWindBackgroundCSS.tsx",
+    "size": 8914
+  },
+  {
+    "path": "apps/web/src/components/FieldSetupModal.tsx",
+    "size": 5870
+  },
+  {
+    "path": "apps/web/src/components/GlobalSearch.tsx",
+    "size": 12336
+  },
+  {
+    "path": "apps/web/src/components/LanguageSelector.tsx",
+    "size": 3899
+  },
+  {
+    "path": "apps/web/src/components/Navbar.tsx",
+    "size": 11135
+  },
+  {
+    "path": "apps/web/src/components/NdviHealthSection.tsx",
+    "size": 12936
+  },
+  {
+    "path": "apps/web/src/components/NetworkStatus.tsx",
+    "size": 2398
+  },
+  {
+    "path": "apps/web/src/components/NotificationBell.tsx",
+    "size": 8100
+  },
+  {
+    "path": "apps/web/src/components/PDFReportButton.tsx",
+    "size": 6393
+  },
+  {
+    "path": "apps/web/src/components/PricePrediction.tsx",
+    "size": 15261
+  },
+  {
+    "path": "apps/web/src/components/ProtectedRoute.tsx",
+    "size": 1004
+  },
+  {
+    "path": "apps/web/src/components/Sidebar.tsx",
+    "size": 3257
+  },
+  {
+    "path": "apps/web/src/components/Skeleton.tsx",
+    "size": 3222
+  },
+  {
+    "path": "apps/web/src/components/SoilSetupModal.tsx",
+    "size": 3000
+  },
+  {
+    "path": "apps/web/src/components/SupplyChainMap.tsx",
+    "size": 13713
+  },
+  {
+    "path": "apps/web/src/components/Timeline.tsx",
+    "size": 3214
+  },
+  {
+    "path": "apps/web/src/components/Toast.tsx",
+    "size": 3335
+  },
+  {
+    "path": "apps/web/src/components/WeatherWidget.tsx",
+    "size": 4538
+  },
+  {
+    "path": "apps/web/src/components/charts/AnalyticsChart.tsx",
+    "size": 2324
+  },
+  {
+    "path": "apps/web/src/components/charts/StatCard.tsx",
+    "size": 2185
+  },
+  {
+    "path": "apps/web/src/components/layout/MainLayout.tsx",
+    "size": 1458
+  },
+  {
+    "path": "apps/web/src/components/ui/EnhancedHero.tsx",
+    "size": 6946
+  },
+  {
+    "path": "apps/web/src/components/ui/Hero.tsx",
+    "size": 3905
+  },
+  {
+    "path": "apps/web/src/components/ui/MacDock.tsx",
+    "size": 11981
+  },
+  {
+    "path": "apps/web/src/components/ui/SectionWrapper.tsx",
+    "size": 598
+  },
+  {
+    "path": "apps/web/src/components/ui/ThemeToggle.tsx",
+    "size": 1256
+  },
+  {
+    "path": "apps/web/src/contexts/AuthContext.tsx",
+    "size": 2586
+  },
+  {
+    "path": "apps/web/src/contexts/NotificationContext.tsx",
+    "size": 3291
+  },
+  {
+    "path": "apps/web/src/contexts/ThemeContext.tsx",
+    "size": 1169
+  },
+  {
+    "path": "apps/web/src/i18n/bn.json",
+    "size": 6874
+  },
+  {
+    "path": "apps/web/src/i18n/config.ts",
+    "size": 1256
+  },
+  {
+    "path": "apps/web/src/i18n/en.json",
+    "size": 3807
+  },
+  {
+    "path": "apps/web/src/i18n/gu.json",
+    "size": 6497
+  },
+  {
+    "path": "apps/web/src/i18n/hi.json",
+    "size": 6670
+  },
+  {
+    "path": "apps/web/src/i18n/kn.json",
+    "size": 7407
+  },
+  {
+    "path": "apps/web/src/i18n/ml.json",
+    "size": 7814
+  },
+  {
+    "path": "apps/web/src/i18n/mr.json",
+    "size": 6689
+  },
+  {
+    "path": "apps/web/src/i18n/or.json",
+    "size": 7212
+  },
+  {
+    "path": "apps/web/src/i18n/pa.json",
+    "size": 6541
+  },
+  {
+    "path": "apps/web/src/i18n/ta.json",
+    "size": 7939
+  },
+  {
+    "path": "apps/web/src/i18n/te.json",
+    "size": 7259
+  },
+  {
+    "path": "apps/web/src/pages/AdminDashboard.tsx",
+    "size": 8420
+  },
+  {
+    "path": "apps/web/src/pages/AdminDashboardNew.tsx",
+    "size": 18503
+  },
+  {
+    "path": "apps/web/src/pages/BlockchainExplorer.tsx",
+    "size": 20674
+  },
+  {
+    "path": "apps/web/src/pages/Chatbot.tsx",
+    "size": 10366
+  },
+  {
+    "path": "apps/web/src/pages/Crops.tsx",
+    "size": 15804
+  },
+  {
+    "path": "apps/web/src/pages/DarkDashboard.tsx",
+    "size": 16864
+  },
+  {
+    "path": "apps/web/src/pages/Dashboard.tsx",
+    "size": 6853
+  },
+  {
+    "path": "apps/web/src/pages/DiseaseDetection.tsx",
+    "size": 19766
+  },
+  {
+    "path": "apps/web/src/pages/DistributorDashboard.tsx",
+    "size": 22060
+  },
+  {
+    "path": "apps/web/src/pages/FarmerDashboard.tsx",
+    "size": 13063
+  },
+  {
+    "path": "apps/web/src/pages/FarmerDashboardNew.tsx",
+    "size": 54704
+  },
+  {
+    "path": "apps/web/src/pages/FarmGallery.tsx",
+    "size": 16000
+  },
+  {
+    "path": "apps/web/src/pages/Farms.tsx",
+    "size": 13461
+  },
+  {
+    "path": "apps/web/src/pages/Landing.tsx",
+    "size": 22251
+  },
+  {
+    "path": "apps/web/src/pages/Login.tsx",
+    "size": 18913
+  },
+  {
+    "path": "apps/web/src/pages/MapDemo.tsx",
+    "size": 4495
+  },
+  {
+    "path": "apps/web/src/pages/Marketplace.tsx",
+    "size": 41811
+  },
+  {
+    "path": "apps/web/src/pages/ProductTrace.tsx",
+    "size": 9468
+  },
+  {
+    "path": "apps/web/src/pages/ProductTracePro.tsx",
+    "size": 44310
+  },
+  {
+    "path": "apps/web/src/pages/Profile.tsx",
+    "size": 26260
+  },
+  {
+    "path": "apps/web/src/pages/SupplyChain.tsx",
+    "size": 1064
+  },
+  {
+    "path": "apps/web/src/pages/SupplyChainDashboard.tsx",
+    "size": 7406
+  },
+  {
+    "path": "apps/web/src/pages/Verify.tsx",
+    "size": 15828
+  },
+  {
+    "path": "apps/web/src/pages/WeatherIntelligence.tsx",
+    "size": 30218
+  },
+  {
+    "path": "apps/web/src/pages/admin/AnalyticsPage.tsx",
+    "size": 5174
+  },
+  {
+    "path": "apps/web/src/pages/admin/Dashboard.tsx",
+    "size": 2660
+  },
+  {
+    "path": "apps/web/src/pages/admin/FarmsPage.tsx",
+    "size": 5924
+  },
+  {
+    "path": "apps/web/src/pages/admin/ProductsPage.tsx",
+    "size": 4899
+  },
+  {
+    "path": "apps/web/src/pages/admin/SettingsPage.tsx",
+    "size": 5837
+  },
+  {
+    "path": "apps/web/src/pages/admin/UsersPage.tsx",
+    "size": 9121
+  },
+  {
+    "path": "apps/web/src/pages/admin/VerificationPage.tsx",
+    "size": 6493
+  },
+  {
+    "path": "apps/web/src/pages/api/chat.ts",
+    "size": 2307
+  },
+  {
+    "path": "apps/web/src/services/api.ts",
+    "size": 1166
+  },
+  {
+    "path": "apps/web/src/services/authService.ts",
+    "size": 2176
+  },
+  {
+    "path": "apps/web/src/services/cartService.ts",
+    "size": 1325
+  },
+  {
+    "path": "apps/web/src/services/cropService.ts",
+    "size": 1639
+  },
+  {
+    "path": "apps/web/src/services/farmService.ts",
+    "size": 1557
+  },
+  {
+    "path": "apps/web/src/services/fieldService.ts",
+    "size": 777
+  },
+  {
+    "path": "apps/web/src/services/index.ts",
+    "size": 742
+  },
+  {
+    "path": "apps/web/src/services/marketService.ts",
+    "size": 1199
+  },
+  {
+    "path": "apps/web/src/services/orderService.ts",
+    "size": 1329
+  },
+  {
+    "path": "apps/web/src/services/predictionService.ts",
+    "size": 2666
+  },
+  {
+    "path": "apps/web/src/services/productService.ts",
+    "size": 1463
+  },
+  {
+    "path": "apps/web/src/services/shipmentService.ts",
+    "size": 1327
+  },
+  {
+    "path": "apps/web/src/services/soilIntelligenceService.ts",
+    "size": 5095
+  },
+  {
+    "path": "apps/web/src/services/supplyChainService.ts",
+    "size": 1823
+  },
+  {
+    "path": "apps/web/src/services/verifyService.ts",
+    "size": 1158
+  },
+  {
+    "path": "apps/web/src/utils/apiRetry.ts",
+    "size": 2768
+  },
+  {
+    "path": "blockchain/contract-address.json",
+    "size": 66
+  },
+  {
+    "path": "blockchain/hardhat.config.js",
+    "size": 496
+  },
+  {
+    "path": "blockchain/package.json",
+    "size": 591
+  },
+  {
+    "path": "blockchain/contracts/Traceability.sol",
+    "size": 2488
+  },
+  {
+    "path": "blockchain/scripts/deploy.js",
+    "size": 917
+  },
+  {
+    "path": "Dataset/Crop_recommendation.csv",
+    "size": 150034
+  },
+  {
+    "path": "Dataset/crop_yield.csv",
+    "size": 6314350
+  },
+  {
+    "path": "Dataset/Fertilizer Prediction.csv",
+    "size": 3829
+  },
+  {
+    "path": "Dataset/ICRISAT-District Level Data.csv",
+    "size": 9263222
+  },
+  {
+    "path": "docs/api.md",
+    "size": 6976
+  },
+  {
+    "path": "docs/ARCHITECTURE.md",
+    "size": 7512
+  },
+  {
+    "path": "Documentation/ADMIN_SYSTEM_COMPLETE.md",
+    "size": 11059
+  },
+  {
+    "path": "Documentation/AgroTrace_Debug_Context.md",
+    "size": 9161
+  },
+  {
+    "path": "Documentation/AgroTrace_Rebuild_Spec.md",
+    "size": 9871
+  },
+  {
+    "path": "Documentation/Antigravity_Response_Audit_Required.md",
+    "size": 4622
+  },
+  {
+    "path": "Documentation/API_ARCHITECTURE.md",
+    "size": 22863
+  },
+  {
+    "path": "Documentation/API_DOCS_COMPLETE.md",
+    "size": 22980
+  },
+  {
+    "path": "Documentation/ARCHITECTURE_DIAGRAM.md",
+    "size": 21211
+  },
+  {
+    "path": "Documentation/ARCHITECTURE_GUIDE.md",
+    "size": 27721
+  },
+  {
+    "path": "Documentation/ARCHITECTURE_SUMMARY.md",
+    "size": 9931
+  },
+  {
+    "path": "Documentation/atlas-credentials.env",
+    "size": 375
+  },
+  {
+    "path": "Documentation/AUTH_SYSTEM_COMPLETE.md",
+    "size": 13006
+  },
+  {
+    "path": "Documentation/AUTH_SYSTEM_DOCS.md",
+    "size": 11620
+  },
+  {
+    "path": "Documentation/CLEAN_ARCHITECTURE_GUIDE.md",
+    "size": 9887
+  },
+  {
+    "path": "Documentation/COMPLETE_PROJECT_DOCUMENTATION.md",
+    "size": 16703
+  },
+  {
+    "path": "Documentation/COMPLETE_TRANSFORMATION.md",
+    "size": 14404
+  },
+  {
+    "path": "Documentation/COMPONENT_INTEGRATION_GUIDE.md",
+    "size": 9867
+  },
+  {
+    "path": "Documentation/CONTRIBUTING.md",
+    "size": 8348
+  },
+  {
+    "path": "Documentation/DEPLOYMENT_GUIDE.md",
+    "size": 6374
+  },
+  {
+    "path": "Documentation/docker-compose.yml",
+    "size": 1512
+  },
+  {
+    "path": "Documentation/ERROR_FIXES_GUIDE.md",
+    "size": 8468
+  },
+  {
+    "path": "Documentation/FINAL_CHECKLIST_COMPLETE.md",
+    "size": 9281
+  },
+  {
+    "path": "Documentation/FINAL_PRODUCT_SUMMARY.md",
+    "size": 12993
+  },
+  {
+    "path": "Documentation/FINAL_UI_POLISH_GUIDE.md",
+    "size": 12219
+  },
+  {
+    "path": "Documentation/FIXES_APPLIED.md",
+    "size": 7504
+  },
+  {
+    "path": "Documentation/GETTING_STARTED.md",
+    "size": 4900
+  },
+  {
+    "path": "Documentation/HACKATHON_CHECKLIST.md",
+    "size": 11090
+  },
+  {
+    "path": "Documentation/HACKATHON_PRESENTATION.md",
+    "size": 13919
+  },
+  {
+    "path": "Documentation/HACKATHON_SUBMISSION.md",
+    "size": 14493
+  },
+  {
+    "path": "Documentation/IMPLEMENTATION_COMPLETE.md",
+    "size": 12128
+  },
+  {
+    "path": "Documentation/install-all.bat",
+    "size": 3187
+  },
+  {
+    "path": "Documentation/INTEGRATION_GUIDE.md",
+    "size": 15756
+  },
+  {
+    "path": "Documentation/INTERVIEW_PREPARATION_GUIDE.md",
+    "size": 17976
+  },
+  {
+    "path": "Documentation/LICENSE",
+    "size": 1090
+  },
+  {
+    "path": "Documentation/LIVE_MAP_GUIDE.md",
+    "size": 10995
+  },
+  {
+    "path": "Documentation/MAP_SUMMARY.md",
+    "size": 4748
+  },
+  {
+    "path": "Documentation/MARKETPLACE_IMPLEMENTATION.md",
+    "size": 14017
+  },
+  {
+    "path": "Documentation/NEON_MIGRATION_GUIDE.md",
+    "size": 4643
+  },
+  {
+    "path": "Documentation/outstanding_features.md",
+    "size": 7909
+  },
+  {
+    "path": "Documentation/package.json",
+    "size": 1367
+  },
+  {
+    "path": "Documentation/PHASE_1_COMPLETE.md",
+    "size": 10975
+  },
+  {
+    "path": "Documentation/PLATFORM_OVERVIEW.md",
+    "size": 13431
+  },
+  {
+    "path": "Documentation/PROJECT_COMPLETION.md",
+    "size": 18535
+  },
+  {
+    "path": "Documentation/project_explanation.md",
+    "size": 9351
+  },
+  {
+    "path": "Documentation/PROJECT_SUMMARY.md",
+    "size": 12542
+  },
+  {
+    "path": "Documentation/QR_CODE_GUIDE.md",
+    "size": 14089
+  },
+  {
+    "path": "Documentation/QR_CODE_IMPLEMENTATION_GUIDE.md",
+    "size": 9589
+  },
+  {
+    "path": "Documentation/QR_SUMMARY.md",
+    "size": 3778
+  },
+  {
+    "path": "Documentation/QUICK_DEPLOY.md",
+    "size": 4083
+  },
+  {
+    "path": "Documentation/QUICK_REFERENCE.md",
+    "size": 6714
+  },
+  {
+    "path": "Documentation/QUICK_START.md",
+    "size": 6824
+  },
+  {
+    "path": "Documentation/README.md",
+    "size": 6726
+  },
+  {
+    "path": "Documentation/REAL_FEATURES_IMPLEMENTATION.md",
+    "size": 14921
+  },
+  {
+    "path": "Documentation/render.yaml",
+    "size": 903
+  },
+  {
+    "path": "Documentation/ROLE_BASED_IMPLEMENTATION.md",
+    "size": 7223
+  },
+  {
+    "path": "Documentation/SCRIPTS_GUIDE.md",
+    "size": 7125
+  },
+  {
+    "path": "Documentation/seed-database.bat",
+    "size": 2574
+  },
+  {
+    "path": "Documentation/SETUP_COMPLETE.md",
+    "size": 10672
+  },
+  {
+    "path": "Documentation/STARTUP_UPGRADES_GUIDE.md",
+    "size": 15472
+  },
+  {
+    "path": "Documentation/TESTING_GUIDE.md",
+    "size": 5184
+  },
+  {
+    "path": "Documentation/TRACEABILITY_GUIDE.md",
+    "size": 13742
+  },
+  {
+    "path": "Documentation/TRACEABILITY_SUMMARY.md",
+    "size": 9329
+  },
+  {
+    "path": "Documentation/turbo.json",
+    "size": 526
+  },
+  {
+    "path": "Documentation/UI_DESIGN_GUIDE.md",
+    "size": 15397
+  },
+  {
+    "path": "Documentation/UI_UPGRADE_DOCS.md",
+    "size": 13247
+  },
+  {
+    "path": "Documentation/vercel.json",
+    "size": 508
+  },
+  {
+    "path": "Documentation/WOW_DEMO_GUIDE.md",
+    "size": 9260
+  },
+  {
+    "path": "Documentation/WOW_FEATURE_DOCS.md",
+    "size": 16302
+  },
+  {
+    "path": "Documentation/WOW_TRANSFORMATION_FINAL.md",
+    "size": 13363
+  },
+  {
+    "path": "Documentation/WOW_TRANSFORMATION_SUMMARY.md",
+    "size": 10495
+  },
+  {
+    "path": "Footages/Agrotrace AI Blockchain Production plan.pdf",
+    "size": 4388608
+  },
+  {
+    "path": "Footages/AgroTrace_AI_Blockchain_Production_Plan_v2.md",
+    "size": 27810
+  },
+  {
+    "path": "Footages/Recording 2026-07-29 191927.mp4",
+    "size": 19424215
+  },
+  {
+    "path": "Footages/Recording 2026-08-03 085028.mp4",
+    "size": 15880503
+  },
+  {
+    "path": "packages/prisma/.env",
+    "size": 55
+  },
+  {
+    "path": "packages/prisma/DIAGRAM.md",
+    "size": 7367
+  },
+  {
+    "path": "packages/prisma/package.json",
+    "size": 755
+  },
+  {
+    "path": "packages/prisma/QUICK_REFERENCE.md",
+    "size": 5674
+  },
+  {
+    "path": "packages/prisma/README.md",
+    "size": 9287
+  },
+  {
+    "path": "packages/prisma/schema.prisma",
+    "size": 16866
+  },
+  {
+    "path": "packages/prisma/SCHEMA_DOCS.md",
+    "size": 13474
+  },
+  {
+    "path": "packages/prisma/seed.ts",
+    "size": 14171
+  },
+  {
+    "path": "packages/prisma/tsconfig.json",
+    "size": 198
+  },
+  {
+    "path": "packages/prisma/migrations/migration_lock.toml",
+    "size": 126
+  },
+  {
+    "path": "packages/prisma/migrations/20260718000000_init/migration.sql",
+    "size": 17451
+  },
+  {
+    "path": "packages/prisma/migrations/20260718000001_add_prediction_provenance/migration.sql",
+    "size": 1644
+  },
+  {
+    "path": "packages/prisma/migrations/20260718142750_add_weather_ndvi_provenance/migration.sql",
+    "size": 982
+  },
+  {
+    "path": "packages/prisma/migrations/20260720045222_add_price_rating_to_product/migration.sql",
+    "size": 164
+  },
+  {
+    "path": "packages/prisma/migrations/20260724193601_add_version_optimistic_locking/migration.sql",
+    "size": 273
+  },
+  {
+    "path": "scratch/check_db.js",
+    "size": 876
+  },
+  {
+    "path": "scratch/file_inventory.json",
+    "size": 3538241
+  },
+  {
+    "path": "scratch/scan_files.py",
+    "size": 1701
+  },
+  {
+    "path": "scratch/verify_milestone2.ts",
+    "size": 12122
+  },
+  {
+    "path": "scratch/verify_milestone3.ts",
+    "size": 15590
+  },
+  {
+    "path": "scratch/verify_milestone4.ts",
+    "size": 10365
+  },
+  {
+    "path": "scripts/audit-deps.sh",
+    "size": 1008
+  },
+  {
+    "path": "services/ai-service/.env",
+    "size": 233
+  },
+  {
+    "path": "services/ai-service/.env.example",
+    "size": 240
+  },
+  {
+    "path": "services/ai-service/Dockerfile",
+    "size": 290
+  },
+  {
+    "path": "services/ai-service/IMPLEMENTATION_SUMMARY.md",
+    "size": 14432
+  },
+  {
+    "path": "services/ai-service/main.py",
+    "size": 17149
+  },
+  {
+    "path": "services/ai-service/package.json",
+    "size": 312
+  },
+  {
+    "path": "services/ai-service/QUICKSTART.md",
+    "size": 9002
+  },
+  {
+    "path": "services/ai-service/README.md",
+    "size": 14677
+  },
+  {
+    "path": "services/ai-service/requirements.txt",
+    "size": 109
+  },
+  {
+    "path": "services/ai-service/test_model.py",
+    "size": 638
+  },
+  {
+    "path": "services/ai-service/data/crop_advisor.joblib",
+    "size": 3547513
+  },
+  {
+    "path": "services/ai-service/data/crop_advisor_encoder.joblib",
+    "size": 1295
+  },
+  {
+    "path": "services/ai-service/data/district_weather_cache.json",
+    "size": 807105
+  },
+  {
+    "path": "services/ai-service/data/fertilizer_advisor.joblib",
+    "size": 504817
+  },
+  {
+    "path": "services/ai-service/data/fertilizer_advisor_encoders.joblib",
+    "size": 1393
+  },
+  {
+    "path": "services/ai-service/data/gee_ndvi_cache.json",
+    "size": 322594
+  },
+  {
+    "path": "services/ai-service/data/n600_significance_report.json",
+    "size": 29666
+  },
+  {
+    "path": "services/ai-service/data/real_ndvi_evaluation.json",
+    "size": 140
+  },
+  {
+    "path": "services/ai-service/data/sentinel_ndvi_cache.json",
+    "size": 320302
+  },
+  {
+    "path": "services/ai-service/data/statistical_significance_report.json",
+    "size": 631
+  },
+  {
+    "path": "services/ai-service/data/yield_predictor_base.joblib",
+    "size": 571177793
+  },
+  {
+    "path": "services/ai-service/data/yield_predictor_fusion.joblib",
+    "size": 570244241
+  },
+  {
+    "path": "services/ai-service/models/crop_advisor.py",
+    "size": 4330
+  },
+  {
+    "path": "services/ai-service/models/disease_predictor.py",
+    "size": 5017
+  },
+  {
+    "path": "services/ai-service/models/fertilizer_advisor.py",
+    "size": 6775
+  },
+  {
+    "path": "services/ai-service/models/yield_predictor.py",
+    "size": 13714
+  },
+  {
+    "path": "services/ai-service/scripts/compare_ndvi_real.py",
+    "size": 11785
+  },
+  {
+    "path": "services/ai-service/scripts/fetch_historical_weather.py",
+    "size": 7423
+  },
+  {
+    "path": "services/ai-service/scripts/statistical_analysis.py",
+    "size": 10158
+  },
+  {
+    "path": "services/ai-service/services/satellite_ndvi.py",
+    "size": 6027
+  },
+  {
+    "path": "services/ai-service/services/weather_backfill.py",
+    "size": 2548
+  },
+  {
+    "path": "services/blockchain/deployment-info.json",
+    "size": 273
+  },
+  {
+    "path": "services/blockchain/hardhat.config.ts",
+    "size": 728
+  },
+  {
+    "path": "services/blockchain/IMPLEMENTATION_SUMMARY.md",
+    "size": 22390
+  },
+  {
+    "path": "services/blockchain/package.json",
+    "size": 1020
+  },
+  {
+    "path": "services/blockchain/QUICKSTART.md",
+    "size": 10441
+  },
+  {
+    "path": "services/blockchain/SUPPLYCHAIN_DOCS.md",
+    "size": 18643
+  },
+  {
+    "path": "services/blockchain/tsconfig.json",
+    "size": 419
+  },
+  {
+    "path": "services/blockchain/contracts/PredictionProvenance.sol",
+    "size": 3706
+  },
+  {
+    "path": "services/blockchain/contracts/SupplyChain.sol",
+    "size": 8603
+  },
+  {
+    "path": "services/blockchain/scripts/deploy.ts",
+    "size": 2081
+  },
+  {
+    "path": "services/blockchain/test/PredictionProvenance.test.ts",
+    "size": 3413
+  },
+  {
+    "path": "services/blockchain/test/SupplyChain.test.ts",
+    "size": 5629
+  },
+  {
+    "path": "services/blockchain/typechain-types/common.ts",
+    "size": 3718
+  },
+  {
+    "path": "services/blockchain/typechain-types/hardhat.d.ts",
+    "size": 6245
+  },
+  {
+    "path": "services/blockchain/typechain-types/index.ts",
+    "size": 1758
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/index.ts",
+    "size": 164
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/index.ts",
+    "size": 217
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/access/AccessControl.ts",
+    "size": 8738
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/access/IAccessControl.ts",
+    "size": 7878
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/access/index.ts",
+    "size": 200
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/index.ts",
+    "size": 278
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/Pausable.ts",
+    "size": 4227
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/ReentrancyGuard.ts",
+    "size": 1984
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/introspection/ERC165.ts",
+    "size": 2505
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/introspection/IERC165.ts",
+    "size": 2509
+  },
+  {
+    "path": "services/blockchain/typechain-types/@openzeppelin/contracts/utils/introspection/index.ts",
+    "size": 172
+  },
+  {
+    "path": "services/blockchain/typechain-types/contracts/index.ts",
+    "size": 208
+  },
+  {
+    "path": "services/blockchain/typechain-types/contracts/PredictionProvenance.ts",
+    "size": 17037
+  },
+  {
+    "path": "services/blockchain/typechain-types/contracts/SupplyChain.ts",
+    "size": 21467
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/index.ts",
+    "size": 181
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/index.ts",
+    "size": 132
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/index.ts",
+    "size": 160
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/access/AccessControl__factory.ts",
+    "size": 4719
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/access/IAccessControl__factory.ts",
+    "size": 4181
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/access/index.ts",
+    "size": 226
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/index.ts",
+    "size": 268
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/Pausable__factory.ts",
+    "size": 1397
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory.ts",
+    "size": 772
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/introspection/ERC165__factory.ts",
+    "size": 942
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/introspection/IERC165__factory.ts",
+    "size": 950
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/@openzeppelin/contracts/utils/introspection/index.ts",
+    "size": 198
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/contracts/index.ts",
+    "size": 234
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/contracts/PredictionProvenance__factory.ts",
+    "size": 17542
+  },
+  {
+    "path": "services/blockchain/typechain-types/factories/contracts/SupplyChain__factory.ts",
+    "size": 34488
+  }
+]

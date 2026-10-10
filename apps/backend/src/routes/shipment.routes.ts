@@ -5,12 +5,12 @@ import {
   getAvailableShipments,
   claimShipment,
 } from '../controllers/shipment.controller';
-import { authenticate } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
 // Protect all shipment routes
-router.use(authenticate);
+router.use(authenticate, authorize('DISTRIBUTOR', 'ADMIN'));
 
 // Get distributor's shipments
 router.get('/my-shipments', getMyShipments);

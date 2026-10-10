@@ -65,7 +65,7 @@ export const chatbotService = {
 
     // Intent 3: Knowledge Base (Semantic Search)
     try {
-      const mlServiceUrl = process.env.ML_SERVICE_URL || process.env.AI_SERVICE_URL || 'http://localhost:8001';
+      const mlServiceUrl = process.env.ML_SERVICE_URL || process.env.AI_SERVICE_URL || 'http://localhost:8000';
       const response = await fetch(`${mlServiceUrl}/api/v1/ml/rag/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

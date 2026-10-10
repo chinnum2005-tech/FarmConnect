@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getAllProducts, createProduct, getMyProducts } from '../controllers/product.controller';
-import { authenticate } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
@@ -11,9 +11,9 @@ router.get('/', getAllProducts);
 router.use(authenticate);
 
 // Get farmer's products
-router.get('/my-products', getMyProducts);
+router.get('/my-products', authorize('FARMER', 'ADMIN'), getMyProducts);
 
 // Create new product
-router.post('/', createProduct);
+router.post('/', authorize('FARMER', 'ADMIN'), createProduct);
 
 export default router;
