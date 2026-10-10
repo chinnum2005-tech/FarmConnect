@@ -5,7 +5,7 @@ import {
   Leaf, Plus, QrCode, Upload, CheckCircle, Package, TrendingUp, 
   Sun, Cloud, Droplets, Wind, Thermometer, Calendar, MapPin,
   DollarSign, Eye, ShoppingCart, BarChart3, PieChart, Activity, LogOut, Store,
-  Microscope, Camera, Shield
+  Camera, Shield
 } from 'lucide-react';
 import { cropService, farmService, verifyService, orderService } from '../services';
 import { QRCodeSVG } from 'qrcode.react';
@@ -196,7 +196,6 @@ export default function FarmerDashboard() {
     { id: 'dashboard', icon: Leaf,         label: 'Dashboard',    active: true, gradient: 'linear-gradient(135deg,#22c55e,#15803d)',  onClick: () => window.location.href='/farmer/dashboard' },
     { id: 'farms',     icon: MapPin,        label: 'My Farms',                  gradient: 'linear-gradient(135deg,#10b981,#047857)',  onClick: () => window.location.href='/farms' },
     { id: 'crops',     icon: Package,       label: 'Crops',                     gradient: 'linear-gradient(135deg,#f59e0b,#d97706)',  onClick: () => window.location.href='/crops' },
-    { id: 'disease',   icon: Microscope,    label: 'Disease AI',                gradient: 'linear-gradient(135deg,#dc2626,#991b1b)',  onClick: () => window.location.href='/disease-detection' },
     { id: 'weather',   icon: Sun,           label: 'Weather AI',                gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',  onClick: () => window.location.href='/weather' },
     { id: 'gallery',   icon: Camera,        label: 'Farm Gallery',              gradient: 'linear-gradient(135deg,#0ea5e9,#0369a1)',  onClick: () => window.location.href='/gallery' },
     { id: 'blockchain',icon: Shield,        label: 'Blockchain',                gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',  onClick: () => window.location.href='/blockchain' },

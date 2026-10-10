@@ -1,11 +1,30 @@
 import { Router, Response, NextFunction } from 'express';
 import axios from 'axios';
+import rateLimit from 'express-rate-limit';
 import prisma from '../database/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
+import { getCurrentWeather, getWeatherForecast, reverseGeocode } from '../controllers/weather.controller';
 
 const router = Router();
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+
+// Rate limiter for weather proxy endpoints to protect upstream quota and prevent abuse
+const weatherLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 120, // 120 requests per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many weather requests. Please try again later.' }
+});
+
+/**
+ * Weather Proxy Endpoints (P0 Security remediation)
+ * Prevents exposing OPENWEATHER_API_KEY in frontend client bundles.
+ */
+router.get('/current', weatherLimiter, getCurrentWeather);
+router.get('/forecast', weatherLimiter, getWeatherForecast);
+router.get('/reverse-geocode', weatherLimiter, reverseGeocode);
 
 /**
  * Trigger historical weather backfill from NASA POWER API

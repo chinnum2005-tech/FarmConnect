@@ -17,7 +17,6 @@ import Verify from './pages/Verify';
 import ProductTracePro from './pages/ProductTracePro';
 import MapDemo from './pages/MapDemo';
 import Chatbot from './pages/Chatbot';
-import DiseaseDetection from './pages/DiseaseDetection';
 import BlockchainExplorer from './pages/BlockchainExplorer';
 import FarmGallery from './pages/FarmGallery';
 import WeatherIntelligence from './pages/WeatherIntelligence';
@@ -35,7 +34,6 @@ import SettingsPage from './pages/admin/SettingsPage';
 import { ToastContainer } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import { NetworkStatus } from './components/NetworkStatus';
-import { DemoModeToggle } from './components/DemoModeToggle';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { NotificationProvider } from './contexts/NotificationContext';
@@ -120,7 +118,6 @@ function AppContent({
           <Route path="/trace/:productId" element={<ProductTracePro />} />
           <Route path="/map-demo" element={<MapDemo />} />
           <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/disease-detection" element={<DiseaseDetection />} />
           <Route path="/blockchain" element={<BlockchainExplorer />} />
           <Route path="/weather" element={<WeatherIntelligence />} />
 
@@ -154,18 +151,7 @@ function App() {
 
   useEffect(() => {
     const initAuth = async () => {
-      // Since token is in cookie, we rely on the presence of user data in localStorage to decide whether to check session
       const userData = localStorage.getItem('user');
-      
-      // If we're using the offline demo mode
-      if (localStorage.getItem('demoMode') === 'true') {
-        if (userData) {
-          setIsAuthenticated(true);
-          setUser(JSON.parse(userData));
-        }
-        setLoading(false);
-        return;
-      }
       
       if (userData) {
         try {
@@ -180,18 +166,7 @@ function App() {
           }
         } catch (error) {
           console.error("Session verification failed:", error);
-          // If offline but we have a token, we might want to keep the session alive 
-          // or force login. For now, if the server returns 401, logout. 
-          // If it's a network error, keep the cached user.
-          if ((error as any)?.response?.status === 401) {
-            handleLogout();
-          } else {
-            const userData = localStorage.getItem('user');
-            if (userData) {
-              setIsAuthenticated(true);
-              setUser(JSON.parse(userData));
-            }
-          }
+          handleLogout();
         }
       }
       setLoading(false);
@@ -220,7 +195,6 @@ function App() {
           <Router>
             <AuthProvider>
               <NetworkStatus />
-              <DemoModeToggle />
               <AppContent
                 user={user}
                 isAuthenticated={isAuthenticated}

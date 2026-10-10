@@ -31,7 +31,7 @@ async function main() {
   console.log("\n[Test 2] Testing Amoy mode missing config -> NOT_CONFIGURED persistence...");
   process.env.BLOCKCHAIN_NETWORK = 'amoy';
   delete process.env.PROVENANCE_CONTRACT_ADDRESS;
-  process.env.CONTRACT_OWNER_PRIVATE_KEY = '0x0123456789012345678901234567890123456789012345678901234567890123';
+  process.env.RELAYER_PRIVATE_KEY = '0x0123456789012345678901234567890123456789012345678901234567890123';
   process.env.RPC_URL = 'https://rpc-amoy.polygon.technology';
 
   const predAmoy = await prisma.yieldPrediction.create({

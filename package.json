@@ -9,8 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "cd packages/prisma && npm install && npx prisma generate && cd ../../apps/backend && npm install && npm run build",
-    "start": "cd apps/backend && npm run start",
+    "build": "npm run db:generate && npm run build -w @agritrace/backend",
+    "start": "npm run start -w @agritrace/backend",
     "db:generate": "cd packages/prisma && npx prisma generate",
     "db:push": "cd packages/prisma && npx prisma db push"
   },

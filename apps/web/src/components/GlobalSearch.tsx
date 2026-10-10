@@ -26,7 +26,6 @@ const searchItems: SearchItem[] = [
   { id: '9', label: 'Admin Products', description: 'View all products and crops', icon: Package, href: '/admin/products', category: 'Admin', keywords: ['products', 'crops', 'inventory'], allowedRoles: ['ADMIN'] },
   { id: '10', label: 'Analytics', description: 'Platform analytics and reports', icon: BarChart3, href: '/admin/analytics', category: 'Admin', keywords: ['analytics', 'reports', 'charts', 'data'], allowedRoles: ['ADMIN'] },
   { id: '11', label: 'AI Assistant', description: 'Ask questions about farming', icon: Bot, href: '/chatbot', category: 'Features', keywords: ['ai', 'chat', 'assistant', 'help', 'bot'] },
-  { id: '12', label: 'Disease Detection', description: 'Upload crop photo for AI diagnosis', icon: Leaf, href: '/disease-detection', category: 'AI Features', keywords: ['disease', 'detect', 'ai', 'photo', 'crop health'], allowedRoles: ['FARMER', 'ADMIN'] },
   { id: '13', label: 'Blockchain Explorer', description: 'View on-chain transaction history', icon: ShieldCheck, href: '/blockchain', category: 'Blockchain', keywords: ['blockchain', 'transactions', 'explorer', 'hash'] },
   { id: '14', label: 'My Crops', description: 'Manage your crop batches', icon: Leaf, href: '/crops', category: 'Farmer', keywords: ['crops', 'batches', 'growing'], allowedRoles: ['FARMER'] },
   { id: '15', label: 'My Farms', description: 'View your registered farms', icon: MapPin, href: '/farms', category: 'Farmer', keywords: ['farms', 'land', 'location'], allowedRoles: ['FARMER'] },

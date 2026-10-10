@@ -4,8 +4,8 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install --include=dev && cd packages/prisma && npm install --include=dev && npx prisma generate && cd ../../apps/backend && npm install --include=dev && npm run build
-    startCommand: cd apps/backend && NODE_ENV=production npm run start
+    buildCommand: npm install && npm run build
+    startCommand: NODE_ENV=production npm run start
     envVars:
       - key: NODE_ENV
         value: production
@@ -17,9 +17,15 @@ services:
         value: 10000
       - key: BLOCKCHAIN_NETWORK
         value: amoy
+      - key: POLYGON_RPC_URL
+        sync: false
       - key: RPC_URL
         sync: false
-      - key: CONTRACT_OWNER_PRIVATE_KEY
+      - key: RELAYER_PRIVATE_KEY
+        sync: false
+      - key: AMOY_RELAYER_ADDRESS
+        sync: false
+      - key: AGROTRACE_REGISTRY_ADDRESS
         sync: false
       - key: TRACEABILITY_CONTRACT_ADDRESS
         sync: false
@@ -31,6 +37,16 @@ services:
         value: https://agrotrace-ml-inference.onrender.com
       - key: CORS_ORIGIN
         value: https://agrotrace-web.onrender.com
+      - key: FRONTEND_URL
+        value: https://agrotrace-web.onrender.com
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: AGMARKNET_API_KEY
+        sync: false
     healthCheckPath: /health
     autoDeploy: true
 
@@ -42,6 +58,7 @@ services:
     rootDir: services/ai-service
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.14
@@ -63,6 +80,7 @@ services:
     rootDir: apps/ml-inference
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.14

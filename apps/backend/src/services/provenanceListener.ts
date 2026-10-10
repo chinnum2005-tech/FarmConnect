@@ -20,9 +20,9 @@ function getContractAddress(): string {
 
 export function startProvenanceListener() {
   try {
-    const rpcUrl = process.env.RPC_URL;
+    const rpcUrl = process.env.POLYGON_RPC_URL || process.env.RPC_URL;
     if (!rpcUrl && process.env.NODE_ENV === 'production') {
-      console.log('ℹ️ RPC_URL not configured. PredictionProvenance listener skipped in production.');
+      console.log('ℹ️ RPC_URL / POLYGON_RPC_URL not configured. PredictionProvenance listener skipped in production.');
       return;
     }
     const targetRpc = rpcUrl || 'http://localhost:8545';

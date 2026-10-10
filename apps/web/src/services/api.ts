@@ -14,10 +14,14 @@ const api = axios.create({
   },
 });
 
-// Fix for legacy /api/ prefixes and inject Bearer token
+// Fix for legacy /api/v1/ or /api/ prefixes and inject Bearer token
 api.interceptors.request.use((config) => {
-  if (config.url && config.url.startsWith('/api/')) {
-    config.url = config.url.substring(4); // Remove '/api'
+  if (config.url) {
+    if (config.url.startsWith('/api/v1/')) {
+      config.url = config.url.substring(7); // Remove '/api/v1'
+    } else if (config.url.startsWith('/api/')) {
+      config.url = config.url.substring(4); // Remove '/api'
+    }
   }
   const token = localStorage.getItem('token');
   if (token && config.headers) {

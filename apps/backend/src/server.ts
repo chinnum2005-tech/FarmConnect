@@ -36,6 +36,24 @@ import { startPriceSnapshotJob } from './jobs/priceSnapshot.job';
 import { errorHandler } from './middleware/errorHandler';
 
 
+// Validate core required environment variables before starting
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'JWT_SECRET',
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`❌ CRITICAL: Missing required environment variable: ${envVar}`);
+    process.exit(1);
+  }
+}
+
+// Payment configuration validation
+if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+  console.warn('⚠️  WARNING: STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET is not configured. Payment endpoints and webhooks are disabled and will return 503 Service Unavailable.');
+}
+
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
 
@@ -43,27 +61,32 @@ const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
 // CORS configuration (MUST be first before other middleware)
-const allowedOrigins = [
+const configuredOrigins = [
+  process.env.CORS_ORIGIN,
+  process.env.FRONTEND_URL,
   'https://agrotrace-web.onrender.com',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:3000',
-  process.env.FRONTEND_URL,
-  process.env.CORS_ORIGIN,
 ].filter(Boolean) as string[];
+
+// Normalize origins: strip trailing slashes and deduplicate
+const allowedOrigins = Array.from(new Set(configuredOrigins.map((o) => o.replace(/\/+$/, ''))));
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    const normalizedOrigin = origin.replace(/\/+$/, '');
     if (
-      allowedOrigins.includes(origin) ||
-      origin.endsWith('.onrender.com') ||
-      process.env.NODE_ENV === 'development'
+      allowedOrigins.includes(normalizedOrigin) ||
+      (process.env.NODE_ENV === 'development' && (normalizedOrigin.startsWith('http://localhost:') || normalizedOrigin.startsWith('http://127.0.0.1:'))) ||
+      /^https:\/\/agrotrace-web(-[a-z0-9-]+)?\.onrender\.com$/.test(normalizedOrigin)
     ) {
       return callback(null, true);
     }
-    return callback(null, true); // Permissive for production demo
+    // Return false without throwing an unhandled Error that causes 500 responses
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -78,11 +101,16 @@ app.options('*', cors(corsOptions));
 // Request tracking
 app.use(requestId);
 
+import paymentRoutes from './routes/payment.routes';
+
 // Security headers
 app.use(securityMiddleware);
 
 // Cookie parsing
 app.use(cookieParser());
+
+// MUST be before express.json() for Stripe webhook raw body verification
+app.use('/api/v1/payments', paymentRoutes);
 
 // Body parsing middleware
 app.use(express.json());

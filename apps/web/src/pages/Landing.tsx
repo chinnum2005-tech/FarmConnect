@@ -351,7 +351,7 @@ const Landing = () => {
               <ul className="space-y-2.5 text-gray-400">
                 <li><Link to="/verify" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />{t('nav.verify')}</Link></li>
                 <li><Link to="/marketplace" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />Marketplace</Link></li>
-                <li><Link to="/disease-detection" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />AI Disease Detection</Link></li>
+                <li><Link to="/weather" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />Weather Intelligence</Link></li>
                 <li><Link to="/blockchain" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />Blockchain Explorer</Link></li>
                 <li><Link to="/login" className="hover:text-indigo-400 transition-colors flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5" />{t('nav.login')}</Link></li>
               </ul>

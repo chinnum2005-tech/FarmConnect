@@ -1,7 +1,7 @@
 import axios from 'axios';
 import prisma from '../database/prisma';
 
-const ML_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 export const mlService = {
   /**

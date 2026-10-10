@@ -580,24 +580,30 @@ npm install
 
 2. **Configure Network**
 ```bash
-# Edit hardhat.config.ts
+# Edit hardhat.config.ts / hardhat.config.js
 networks: {
-  mumbai: {
+  amoy: {
     url: process.env.POLYGON_RPC_URL,
-    accounts: [process.env.CONTRACT_OWNER_PRIVATE_KEY]
+    accounts: [process.env.AMOY_DEPLOYER_PRIVATE_KEY]
   }
 }
 ```
 
 3. **Deploy Contract**
 ```bash
-npx hardhat run scripts/deploy.ts --network mumbai
+npx hardhat run scripts/deploy.js --network amoy
 ```
 
-4. **Save Contract Address**
-- Copy deployed address
-- Update backend `.env` file
-- `CONTRACT_ADDRESS=0x...`
+4. **Configure Backend Runtime**
+- Set deployed contract address: `AGROTRACE_REGISTRY_ADDRESS=0x...`
+- Set canonical relayer key: `RELAYER_PRIVATE_KEY=0x...` (strictly required on Polygon Amoy; Hardhat default dev keys prohibited)
+- Set expected relayer address for validation: `AMOY_RELAYER_ADDRESS=0x...` (canonical; `RELAYER_ADDRESS` supported as alias)
+- **Signer Identity & Role Preflight Validation**:
+  - The derived wallet address from `RELAYER_PRIVATE_KEY` must strictly match `AMOY_RELAYER_ADDRESS`.
+  - Before any state-changing transaction (`registerBatch` or `recordEvent`), the service executes an on-chain read-only authorization preflight query: `hasRole(RELAYER_ROLE, signerAddress)`.
+  - The service fails closed and submits zero transactions if the address is missing, malformed, mismatched, the role check evaluates to `false`, or the RPC query fails.
+  - Successful authorization is cached per `(chainId, contractAddress, signerAddress)` to minimize RPC latency.
+  - A consistent role preflight safeguard is enforced for the AI prediction provenance subsystem (`WRITER_ROLE` on `PredictionProvenance`).
 
 ---
 

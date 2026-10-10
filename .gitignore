@@ -17,6 +17,8 @@ out/
 .env
 .env.local
 .env.*.local
+Documentation/*.env
+atlas-credentials.env
 
 # IDE
 .vscode/

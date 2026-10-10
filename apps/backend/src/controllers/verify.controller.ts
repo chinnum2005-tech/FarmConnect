@@ -3,6 +3,8 @@ import QRCode from 'qrcode';
 import prisma from '../database/prisma';
 import { AppError } from '../middleware/errorHandler';
 import crypto from 'crypto';
+import { blockchainService, RegistryEventType, toRegistryEventType } from '../services/blockchain.service';
+import { hashEvidence, toBatchIdBytes32 } from '../services/evidenceHasher';
 
 // Verify product by QR code (public endpoint)
 export const verifyProduct = async (req: any, res: Response) => {
@@ -185,3 +187,123 @@ export const generateQRCode = async (req: any, res: Response) => {
     throw new AppError('Failed to generate QR code', 500);
   }
 };
+
+/**
+ * Independent on-chain produce verification endpoint.
+ * Reads on-chain commitments directly from AgroTraceRegistry via read-only RPC provider,
+ * recomputes the cryptographic evidence hash from off-chain produce data,
+ * and distinguishes VERIFIED, MISMATCH, NOT_FOUND, PENDING, and UNAVAILABLE states.
+ */
+export const verifyOnChainProduce = async (req: any, res: Response) => {
+  try {
+    const { identifier } = req.params;
+    if (!identifier) {
+      throw new AppError('Batch or produce identifier is required', 400);
+    }
+
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
+
+    // 1. Locate product or crop
+    let product: any = null;
+    let crop: any = null;
+
+    if (isObjectId) {
+      product = await prisma.product.findUnique({
+        where: { id: identifier },
+        include: { crop: { include: { farm: true } } },
+      });
+    }
+
+    if (product) {
+      crop = product.crop;
+    } else {
+      crop = await prisma.crop.findFirst({
+        where: {
+          OR: [
+            { qrCode: identifier },
+            ...(isObjectId ? [{ id: identifier }] : []),
+          ],
+        },
+        include: { farm: true },
+      });
+    }
+
+    if (!crop && !product) {
+      // Check if identifier is a direct batchId
+      let customEvidence: any = { id: identifier };
+      if (req.body?.evidence) {
+        customEvidence = req.body.evidence;
+      } else if (req.query?.evidence) {
+        try {
+          customEvidence = typeof req.query.evidence === 'string' ? JSON.parse(req.query.evidence) : req.query.evidence;
+        } catch (e) {
+          customEvidence = { raw: req.query.evidence };
+        }
+      }
+
+      const eventTypeParam = req.query?.eventType !== undefined
+        ? toRegistryEventType(req.query.eventType as string)
+        : (req.body?.eventType !== undefined ? toRegistryEventType(req.body.eventType) : RegistryEventType.PLANTED);
+
+      const batchResult = await blockchainService.verifyOnChain(identifier, eventTypeParam, customEvidence);
+      return res.json({
+        success: true,
+        data: batchResult,
+      });
+    }
+
+    // 2. Determine target batch ID and canonical produce evidence
+    const batchId = product ? product.id : crop.id;
+    const evidencePayload = {
+      batchId,
+      cropName: crop ? crop.name : product.name,
+      cropType: crop ? crop.type : 'PRODUCE',
+      farmName: crop?.farm?.name || 'AgroTrace Partner Farm',
+      plantingDate: crop?.plantingDate || new Date().toISOString(),
+      variety: crop?.variety || null,
+      status: product?.status || crop?.growthStage || 'ACTIVE',
+    };
+
+    // 3. Find any latest or pending blockchain event record
+    const latestEvent = await prisma.supplyChainEvent.findFirst({
+      where: {
+        OR: [
+          ...(product ? [{ productId: product.id }] : []),
+          ...(crop ? [{ cropId: crop.id }] : []),
+        ],
+      },
+      orderBy: { timestamp: 'desc' },
+    });
+
+    const eventType = latestEvent ? toRegistryEventType(latestEvent.eventType) : RegistryEventType.PLANTED;
+    const pendingTxHash = latestEvent?.chainStatus === 'PENDING' ? (latestEvent.transactionHash || undefined) : undefined;
+
+    // 4. Perform truthful on-chain verification
+    const verification = await blockchainService.verifyOnChain(
+      batchId,
+      eventType,
+      evidencePayload,
+      pendingTxHash
+    );
+
+    res.json({
+      success: true,
+      data: {
+        ...verification,
+        produceDetails: {
+          id: batchId,
+          name: crop ? crop.name : product.name,
+          farm: crop?.farm?.name,
+        },
+      },
+    });
+  } catch (error: any) {
+    if (error instanceof AppError) throw error;
+    res.status(500).json({
+      success: false,
+      error: 'On-chain verification error',
+      message: error?.message || 'Failed to verify on-chain',
+    });
+  }
+};
+

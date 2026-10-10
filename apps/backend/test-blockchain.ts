@@ -2,7 +2,7 @@ import { blockchainService } from './src/services/blockchain.service';
 
 async function main() {
   const originalAddress = process.env.TRACEABILITY_CONTRACT_ADDRESS;
-  const originalKey = process.env.CONTRACT_OWNER_PRIVATE_KEY;
+  const originalKey = process.env.RELAYER_PRIVATE_KEY;
   const originalUrl = process.env.RPC_URL;
 
   console.log("--- Starting Amoy Strict Mode Component Testing ---");
@@ -11,7 +11,7 @@ async function main() {
   try {
     console.log("\nTesting missing TRACEABILITY_CONTRACT_ADDRESS...");
     delete process.env.TRACEABILITY_CONTRACT_ADDRESS;
-    process.env.CONTRACT_OWNER_PRIVATE_KEY = 'fake_key';
+    process.env.RELAYER_PRIVATE_KEY = 'fake_key';
     process.env.RPC_URL = 'fake_url';
     await blockchainService.recordEvent('test', 'test', {});
     console.error("FAIL: Did not throw on missing address!");
@@ -21,9 +21,9 @@ async function main() {
 
   // Test 2: Missing Key
   try {
-    console.log("\nTesting missing CONTRACT_OWNER_PRIVATE_KEY...");
+    console.log("\nTesting missing RELAYER_PRIVATE_KEY...");
     process.env.TRACEABILITY_CONTRACT_ADDRESS = 'fake_address';
-    delete process.env.CONTRACT_OWNER_PRIVATE_KEY;
+    delete process.env.RELAYER_PRIVATE_KEY;
     process.env.RPC_URL = 'fake_url';
     await blockchainService.recordEvent('test', 'test', {});
     console.error("FAIL: Did not throw on missing key!");
@@ -35,7 +35,7 @@ async function main() {
   try {
     console.log("\nTesting missing RPC_URL...");
     process.env.TRACEABILITY_CONTRACT_ADDRESS = 'fake_address';
-    process.env.CONTRACT_OWNER_PRIVATE_KEY = 'fake_key';
+    process.env.RELAYER_PRIVATE_KEY = 'fake_key';
     delete process.env.RPC_URL;
     await blockchainService.recordEvent('test', 'test', {});
     console.error("FAIL: Did not throw on missing RPC_URL!");

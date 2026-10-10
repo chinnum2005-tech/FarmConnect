@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { NextFunction, Response } from 'express';
 import prisma from '../database/prisma';
 import { AppError } from '../middleware/errorHandler';
@@ -28,6 +29,10 @@ const generateRefreshToken = (user: { id: string; email: string; role: string })
     jwtSecret,
     { expiresIn: refreshExpiresIn } as jwt.SignOptions
   );
+};
+
+const hashToken = (token: string) => {
+  return crypto.createHash('sha256').update(token).digest('hex');
 };
 
 // Helper for cookie options (supports cross-domain in production)
@@ -65,6 +70,17 @@ export const register = async (req: AuthRequest, res: Response, next: NextFuncti
     // Generate tokens
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
+
+    // Store hashed refresh token in DB
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // Matches 7d JWT_REFRESH_EXPIRES_IN
+    await prisma.refreshToken.create({
+      data: {
+        tokenHash: hashToken(refreshToken),
+        userId: user.id,
+        expiresAt,
+      }
+    });
 
     const cookieOptions = getCookieOptions();
     res.cookie('token', token, { ...cookieOptions, maxAge: 24 * 60 * 60 * 1000 });
@@ -123,6 +139,17 @@ export const login = async (req: AuthRequest, res: Response, next: NextFunction)
     // Generate tokens
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
+
+    // Store hashed refresh token in DB
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    await prisma.refreshToken.create({
+      data: {
+        tokenHash: hashToken(refreshToken),
+        userId: user.id,
+        expiresAt,
+      }
+    });
 
     const cookieOptions = getCookieOptions();
     res.cookie('token', token, { ...cookieOptions, maxAge: 24 * 60 * 60 * 1000 });
@@ -224,17 +251,45 @@ export const refreshToken = async (req: AuthRequest, res: Response, next: NextFu
       throw new AppError('User not found', 404);
     }
 
-    // Generate new access token
+    // Check DB for the hashed token
+    const tokenHash = hashToken(refreshToken);
+    const savedToken = await prisma.refreshToken.findUnique({
+      where: { tokenHash }
+    });
+
+    if (!savedToken) {
+      throw new AppError('Refresh token has been revoked or is invalid', 401);
+    }
+
+    // Delete the old refresh token (rotation)
+    await prisma.refreshToken.delete({
+      where: { tokenHash }
+    });
+
+    // Generate new tokens
     const newToken = generateToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    await prisma.refreshToken.create({
+      data: {
+        tokenHash: hashToken(newRefreshToken),
+        userId: user.id,
+        expiresAt,
+      }
+    });
 
     const cookieOptions = getCookieOptions();
     res.cookie('token', newToken, { ...cookieOptions, maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     res.json({
       success: true,
       message: 'Token refreshed successfully',
       data: {
         token: newToken,
+        refreshToken: newRefreshToken,
         expiresIn: process.env.JWT_EXPIRES_IN || '24h',
       },
     });
@@ -248,16 +303,27 @@ export const refreshToken = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-export const logout = async (req: AuthRequest, res: Response) => {
-  const cookieOptions = getCookieOptions();
-  
-  res.clearCookie('token', cookieOptions);
-  res.clearCookie('refreshToken', cookieOptions);
-  
-  res.json({
-    success: true,
-    message: 'Logged out successfully'
-  });
+export const logout = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+    if (refreshToken) {
+      const tokenHash = hashToken(refreshToken);
+      await prisma.refreshToken.deleteMany({
+        where: { tokenHash }
+      });
+    }
+
+    const cookieOptions = getCookieOptions();
+    res.clearCookie('token', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+    
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (error) {
+    next(new AppError('Failed to logout', 500));
+  }
 };
 
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {

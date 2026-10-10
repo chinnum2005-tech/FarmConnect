@@ -16,10 +16,10 @@ Based on a deep review of your current stack (React + TypeScript, Node.js/Expres
 **Why it's outstanding**: Transforms dashboards from "info displays" to "command centers."  
 **How**: Use `recharts` or `apexcharts`. Pull data from your existing backend endpoints. Add websocket support for live updates.
 
-### 3. 🧠 AI Crop Disease Detection (Image Upload)
-**What**: Farmer uploads a photo of a crop leaf → AI returns a disease prediction + remedies.  
-**Why it's outstanding**: Visual AI is the most demo-friendly feature imaginable. Completely differentiates you.  
-**How**: Integrate a pre-trained model (PlantVillage dataset) in your Python FastAPI service using `torchvision` or `tensorflow`. Add a simple image upload UI in the Farmer Dashboard.
+### 3. 🧠 AI Crop Recommendation & Soil Intelligence
+**What**: Farmer inputs soil nutrients (N, P, K, pH) and weather parameters → AI returns optimal crop recommendations.  
+**Why it's outstanding**: High-utility agricultural advisory tailored to regional soil health.  
+**How**: Scikit-learn multi-class models in Python FastAPI microservice (`/predict/crop`).
 
 ### 4. 🌤️ Live Weather Integration per Farm
 **What**: Each farm's dashboard shows real-time weather + 7-day forecast fetched by the farm's GPS coordinates.  
@@ -102,7 +102,7 @@ Based on a deep review of your current stack (React + TypeScript, Node.js/Expres
 | Priority | Feature | Impact | Effort |
 |----------|---------|--------|--------|
 | 1st | Live Supply Chain Map | ⭐⭐⭐⭐⭐ | Medium |
-| 2nd | AI Crop Disease Detection | ⭐⭐⭐⭐⭐ | Medium |
+| 2nd | AI Crop Recommendation | ⭐⭐⭐⭐⭐ | Medium |
 | 3rd | Real-Time Charts & Analytics | ⭐⭐⭐⭐ | Low |
 | 4th | Weather Integration per Farm | ⭐⭐⭐⭐ | Low |
 | 5th | Real-Time Notifications | ⭐⭐⭐⭐ | Medium |
@@ -117,7 +117,7 @@ Based on a deep review of your current stack (React + TypeScript, Node.js/Expres
 ## 💬 One Sentence Per Feature (For Pitching)
 
 - **Live Map**: *"Watch your food's journey in real time on an interactive map."*
-- **Disease AI**: *"Farmers catch crop diseases early using just their phone camera."*
+- **Crop AI**: *"Farmers optimize crop selection using automated soil nutrient and weather intelligence."*
 - **Weather**: *"Every farm dashboard shows live weather forecasts tailored to that farm's GPS location."*
 - **NFT Certs**: *"Every product that completes its journey gets a blockchain-backed Certificate of Authenticity — a permanent, tamper-proof digital badge."*
 - **Demand AI**: *"Our AI tells farmers the best time to sell their crops based on predicted market demand."*

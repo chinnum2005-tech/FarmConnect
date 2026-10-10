@@ -4,6 +4,10 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ Database seeding aborted. Seeding is not allowed in production.');
+    process.exit(1);
+  }
   if (process.env.ALLOW_SEED !== 'true') {
     console.error('❌ Database seeding aborted. Seeding is locked unless ALLOW_SEED=true is set.');
     process.exit(1);

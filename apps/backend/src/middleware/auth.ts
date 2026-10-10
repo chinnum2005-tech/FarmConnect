@@ -17,10 +17,13 @@ export const authenticate = (
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    let token = req.cookies?.token;
-    
-    if (!token && authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.replace('Bearer ', '');
+    let token: string | undefined;
+
+    // Bearer token from header takes precedence over cookie
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.replace('Bearer ', '').trim();
+    } else if (req.cookies?.token) {
+      token = req.cookies.token;
     }
 
     if (!token) {

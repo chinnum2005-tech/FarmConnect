@@ -12,20 +12,7 @@ interface LoginProps {
   onLogin: (user: any) => void;
 }
 
-// These only activate when the backend server is completely unreachable (network error)
-// They do NOT activate on wrong password — that still shows the real error.
-const OFFLINE_DEMO_USERS: Record<string, { user: any; password: string }> = {
-  'farmer@farmconnect.in':      { password: 'farmer123',    user: { id: 'demo-1', firstName: 'John',  lastName: 'Farmer',      email: 'farmer@farmconnect.in',      role: 'FARMER' } },
-  'admin@farmconnect.in':       { password: 'admin123',     user: { id: 'demo-2', firstName: 'Admin', lastName: 'User',        email: 'admin@farmconnect.in',       role: 'ADMIN' } },
-  'distributor@farmconnect.in': { password: 'dist123',      user: { id: 'demo-3', firstName: 'Sarah', lastName: 'Distributor', email: 'distributor@farmconnect.in', role: 'DISTRIBUTOR' } },
-  'consumer@farmconnect.in':    { password: 'consumer123',  user: { id: 'demo-4', firstName: 'Mike',  lastName: 'Consumer',    email: 'consumer@farmconnect.in',    role: 'CONSUMER' } },
-};
-
-const demoCards = [
-  { email: 'farmer@farmconnect.in',      password: 'farmer123',   label: 'Farmer',      emoji: '👨‍🌾', color: 'from-green-500 to-emerald-600' },
-  { email: 'admin@farmconnect.in',       password: 'admin123',    label: 'Admin',       emoji: '🛡️',  color: 'from-purple-500 to-violet-600' },
-  { email: 'distributor@farmconnect.in', password: 'dist123',     label: 'Distributor', emoji: '🚚', color: 'from-blue-500 to-cyan-600' },
-];
+// Login component
 
 export default function Login({ onLogin }: LoginProps) {
   const { t } = useTranslation();
@@ -34,12 +21,7 @@ export default function Login({ onLogin }: LoginProps) {
   const [formData, setFormData] = useState({ email: '', password: '', firstName: '', lastName: '', role: 'CONSUMER' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [usingOfflineMode, setUsingOfflineMode] = useState(false);
 
-  const isNetworkError = (err: any): boolean => {
-    // true only if the server is completely unreachable (no response at all)
-    return !err.response && (err.code === 'ERR_NETWORK' || err.code === 'ECONNREFUSED' || err.message === 'Network Error');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,23 +53,7 @@ export default function Login({ onLogin }: LoginProps) {
     }
   };
 
-  const handleDemoCardClick = async (card: typeof demoCards[0]) => {
-    setError('');
-    setLoading(true);
-    try {
-      const response = await authService.login(card.email, card.password);
-      if (response.success && response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        onLogin(response.data.user);
-      } else {
-        setError(response.message || 'Login failed');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Could not connect to the backend server. Make sure it is running on port 3001.');
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-green-950 to-slate-900">
@@ -137,7 +103,7 @@ export default function Login({ onLogin }: LoginProps) {
           <div className="space-y-4">
             {[
               { icon: Shield, text: 'Blockchain-verified authenticity for every product' },
-              { icon: Zap,    text: 'AI-powered disease detection and yield prediction' },
+              { icon: Zap,    text: 'AI-powered crop recommendation and yield prediction' },
               { icon: Sparkles, text: 'Real-time supply chain tracking across India' },
             ].map((item, i) => (
               <motion.div
@@ -155,27 +121,7 @@ export default function Login({ onLogin }: LoginProps) {
             ))}
           </div>
 
-          {/* Quick login cards */}
-          <div className="mt-10">
-            <p className="text-slate-400 text-xs mb-3 font-medium uppercase tracking-wider">
-              Quick Login (uses real database accounts)
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {demoCards.map((card) => (
-                <motion.button
-                  key={card.label}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handleDemoCardClick(card)}
-                  disabled={loading}
-                  className={`bg-gradient-to-br ${card.color} p-3 rounded-xl text-white text-center shadow-lg hover:shadow-xl transition-all disabled:opacity-60`}
-                >
-                  <div className="text-2xl mb-1">{card.emoji}</div>
-                  <div className="text-xs font-bold">{card.label}</div>
-                </motion.button>
-              ))}
-            </div>
-          </div>
+
         </motion.div>
 
         {/* Right panel — Form */}
@@ -192,20 +138,6 @@ export default function Login({ onLogin }: LoginProps) {
             </div>
             <span className="text-xl font-bold text-white">FarmConnect</span>
           </div>
-
-          {/* Offline mode banner */}
-          <AnimatePresence>
-            {usingOfflineMode && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-xl mb-4 text-sm"
-              >
-                <WifiOff className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                <span>Server unreachable — signed in with offline demo account. Start the backend for full access.</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           {/* Sign In / Register toggle */}
           <div className="flex gap-1 bg-white/10 rounded-xl p-1 mb-6">
@@ -354,25 +286,7 @@ export default function Login({ onLogin }: LoginProps) {
             </motion.button>
           </form>
 
-          {/* Mobile quick login */}
-          <div className="lg:hidden mt-6">
-            <p className="text-slate-400 text-xs mb-3 text-center font-medium uppercase tracking-wider">
-              Quick Login
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {demoCards.map((card) => (
-                <button
-                  key={card.label}
-                  onClick={() => handleDemoCardClick(card)}
-                  disabled={loading}
-                  className={`bg-gradient-to-br ${card.color} p-2.5 rounded-xl text-white text-center shadow-lg disabled:opacity-60`}
-                >
-                  <div className="text-xl mb-0.5">{card.emoji}</div>
-                  <div className="text-xs font-bold">{card.label}</div>
-                </button>
-              ))}
-            </div>
-          </div>
+
 
           <p className="text-center text-slate-400 text-sm mt-5">
             {isRegister ? (

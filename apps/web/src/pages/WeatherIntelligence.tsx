@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Cloud, Wind, Droplets, Sun, CloudRain, AlertTriangle, Thermometer, MapPin, Compass, Sprout, ShieldAlert, Calendar, Navigation, History, Store, ShoppingCart, Shield, MessageCircle, LogOut, Camera } from 'lucide-react';
 import MacDock, { DockItem } from '../components/ui/MacDock';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import api from '../services/api';
 
 interface WeatherData {
   name: string;
@@ -56,20 +57,24 @@ export default function WeatherIntelligence() {
         }
       }
 
-      const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY || 'f98050b888e60451bf625061c6b8c436';
-      
-      const currentRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`);
-      if (!currentRes.ok) throw new Error('Location not found');
-      const currentData = await currentRes.json();
+      // Query secure backend weather proxy (P0 key containment)
+      const currentRes = await api.get('/weather/current', {
+        params: { city: location }
+      });
+      const currentData = currentRes.data;
       setCurrentWeather(currentData);
 
-      const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=${apiKey}`);
       let finalForecast = [];
-      if (forecastRes.ok) {
-        const forecastData = await forecastRes.json();
-        const dailyForecasts = forecastData.list.filter((item: any) => item.dt_txt.includes('12:00:00')).slice(0, 5);
-        finalForecast = dailyForecasts.length > 0 ? dailyForecasts : forecastData.list.slice(0, 5);
+      try {
+        const forecastRes = await api.get('/weather/forecast', {
+          params: { city: location }
+        });
+        const forecastData = forecastRes.data;
+        const dailyForecasts = forecastData.list?.filter((item: any) => item.dt_txt?.includes('12:00:00')).slice(0, 5) || [];
+        finalForecast = dailyForecasts.length > 0 ? dailyForecasts : (forecastData.list?.slice(0, 5) || []);
         setForecast(finalForecast);
+      } catch (fErr) {
+        console.warn('Weather forecast fetch warning:', fErr);
       }
       
       localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -80,7 +85,8 @@ export default function WeatherIntelligence() {
       
       generateHistoricalData(currentData.main.temp, location);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch weather data');
+      const errMsg = err.response?.data?.error || err.message || 'Failed to fetch weather data';
+      setError(errMsg);
       generateMockData(location);
     } finally {
       setLoading(false);
@@ -101,12 +107,12 @@ export default function WeatherIntelligence() {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY || 'f98050b888e60451bf625061c6b8c436';
+          // Query secure backend reverse-geocode proxy
+          const geoRes = await api.get('/weather/reverse-geocode', {
+            params: { lat: latitude, lon: longitude, limit: 1 }
+          });
           
-          const geoRes = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${apiKey}`);
-          if (!geoRes.ok) throw new Error('Failed to identify location');
-          
-          const geoData = await geoRes.json();
+          const geoData = geoRes.data;
           if (geoData && geoData.length > 0) {
             const detectedCity = geoData[0].name;
             setCity(detectedCity);

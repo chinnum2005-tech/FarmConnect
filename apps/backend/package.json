@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^4.6.0",
     "qrcode": "^1.5.4",
+    "stripe": "^22.6.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^9.0.1",

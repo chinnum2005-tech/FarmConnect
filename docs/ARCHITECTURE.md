@@ -190,7 +190,7 @@ Consumer → Scans QR code → Calls /verify/:qrCode
 
 2. **Advanced AI**
    - Deep learning models (TensorFlow)
-   - Image recognition for disease detection
+   - Advanced soil-nutrient predictive modeling
    - Satellite imagery analysis
 
 3. **Mobile Features**

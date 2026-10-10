@@ -3,6 +3,7 @@ import prisma from '../database/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { blockchainService } from '../services/blockchain.service';
+import { eventLifecycleService } from '../services/eventLifecycle.service';
 
 /**
  * Get supply chain events for a product
@@ -89,58 +90,27 @@ export const addSupplyChainEvent = async (req: AuthRequest, res: Response) => {
     // Create supply chain event with optional coordinates
     const metadataObj = metadata ? { ...metadata, latitude, longitude } : { description, latitude, longitude };
 
-    const event = await prisma.supplyChainEvent.create({
-      data: {
-        productId,
-        eventType,
-        location: location || null,
-        actorId: userId,
-        timestamp: new Date(),
-        metadata: JSON.stringify(metadataObj),
-        verified: false,
-        chainStatus: 'PENDING',
-      },
-      include: {
-        actor: {
-          select: {
-            firstName: true,
-            lastName: true,
-            role: true,
-          }
-        }
-      }
-    });
-
-    // Fire off blockchain transaction asynchronously
-    blockchainService.recordEvent(
-      productId, 
-      eventType, 
-      metadataObj
-    ).then(async (result) => {
-      await prisma.supplyChainEvent.update({
-        where: { id: event.id },
-        data: {
-          transactionHash: result.txHash,
-          chainStatus: result.simulated ? 'SIMULATED_FALLBACK' : 'CONFIRMED',
-          verified: !result.simulated // only true if not simulated
-        }
-      });
-    }).catch(err => {
-      console.error('Failed to anchor custom event to blockchain', err);
-      prisma.supplyChainEvent.update({
-        where: { id: event.id },
-        data: { chainStatus: 'FAILED' }
-      }).catch(console.error);
+    // Record through honest 5-state lifecycle service
+    const lifecycleResult = await eventLifecycleService.recordAndPersistEvent({
+      batchId: productId,
+      productId,
+      eventType,
+      evidence: metadataObj,
+      actorId: userId,
+      location: location || null,
+      idempotencyKey: (req.headers && req.headers['idempotency-key'] ? String(req.headers['idempotency-key']) : undefined),
     });
 
     res.status(201).json({
       success: true,
       message: 'Supply chain event recorded successfully',
       data: {
-        id: event.id,
-        eventType: event.eventType,
-        timestamp: event.timestamp,
-        actor: `${event.actor.firstName} ${event.actor.lastName}`,
+        id: lifecycleResult.eventId,
+        eventType,
+        status: lifecycleResult.status,
+        transactionHash: lifecycleResult.transactionHash,
+        verified: lifecycleResult.verified,
+        isReplay: lifecycleResult.isReplay,
       }
     });
   } catch (error) {

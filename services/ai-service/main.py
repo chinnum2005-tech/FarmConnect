@@ -26,7 +26,7 @@ if 'tensorflow' not in sys.modules:
     sys.modules['tensorflow'] = _BlockTF()  # type: ignore
 # =================================================================================
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Request, Security
+from fastapi import FastAPI, HTTPException, Depends, Request, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -40,17 +40,14 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from models.yield_predictor import YieldPredictor
-from models.disease_predictor import DiseasePredictor
 from models.crop_advisor import CropAdvisor
 from models.fertilizer_advisor import FertilizerAdvisor
-from PIL import Image
-import io
 from services.weather_backfill import fetch_historical_weather_nasa
 from services.satellite_ndvi import fetch_satellite_ndvi
 
 app = FastAPI(
     title="AgriTrace AI Service",
-    description="AI-powered crop yield and disease prediction service",
+    description="AI-powered crop yield, recommendation, and fertilizer advisory service",
     version="1.0.0"
 )
 
@@ -82,8 +79,6 @@ def decrypt_model_at_rest(model_path: str):
 decrypt_model_at_rest("models/yield_model.enc")
 predictor = YieldPredictor()
 
-decrypt_model_at_rest("models/disease_model.enc")
-disease_predictor = DiseasePredictor()
 
 crop_advisor = CropAdvisor()
 fertilizer_advisor = FertilizerAdvisor()
@@ -198,7 +193,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Security(securi
 @app.get("/health")
 async def health_check():
     """Health check endpoint (MED-008)"""
-    models_ready = predictor is not None and disease_predictor is not None
+    models_ready = predictor is not None and crop_advisor is not None and fertilizer_advisor is not None
     return {
         "status": "healthy" if models_ready else "degraded",
         "timestamp": datetime.now().isoformat(),
@@ -294,45 +289,6 @@ def get_cached_prediction(crop_type: str, area: float, rainfall: float, ph: floa
         soil=soil_data
     )
 
-
-@app.post("/predict/disease")
-@limiter.limit("5/minute")
-async def predict_disease(request: Request, file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
-    """
-    Predict plant disease from an uploaded image
-    """
-    if file.size and file.size > 5 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="File size exceeds 5MB limit")
-        
-    allowed_types = ["image/jpeg", "image/png", "image/jpg"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(status_code=415, detail="Unsupported Media Type: Only JPEG/PNG allowed")
-        
-    def scan_file_for_viruses(content: bytes):
-        # Mock ClamAV implementation
-        if b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*" in content:
-            raise HTTPException(status_code=400, detail="Virus detected by ClamAV scanner")
-        return True
-        
-    try:
-        contents = await file.read()
-        scan_file_for_viruses(contents)
-        
-        # Strip EXIF data for privacy hardening (LOW audit finding)
-        image = Image.open(io.BytesIO(contents))
-        data = list(image.getdata())
-        image_without_exif = Image.new(image.mode, image.size)
-        image_without_exif.putdata(data)
-        
-        # Save back to bytes for predictor
-        img_byte_arr = io.BytesIO()
-        image_without_exif.save(img_byte_arr, format=image.format)
-        contents = img_byte_arr.getvalue()
-        
-        prediction = disease_predictor.predict(contents)
-        return prediction
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Disease prediction failed: {str(e)}")
 
 
 @app.post("/predict/crop", response_model=CropRecommendationResponse)

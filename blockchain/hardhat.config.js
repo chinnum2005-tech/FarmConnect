@@ -6,11 +6,30 @@ module.exports = {
   solidity: "0.8.24",
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545"
+      url: "http://127.0.0.1:8545",
+      chainId: 31337
     },
     amoy: {
       url: process.env.POLYGON_RPC_URL || "https://polygon-amoy-bor-rpc.publicnode.com",
-      accounts: process.env.CONTRACT_OWNER_PRIVATE_KEY ? [process.env.CONTRACT_OWNER_PRIVATE_KEY] : []
+      chainId: 80002,
+      accounts: process.env.AMOY_DEPLOYER_PRIVATE_KEY
+        ? [process.env.AMOY_DEPLOYER_PRIVATE_KEY]
+        : []
     }
+  },
+  etherscan: {
+    apiKey: {
+      polygonAmoy: process.env.POLYGONSCAN_API_KEY || ""
+    },
+    customChains: [
+      {
+        network: "polygonAmoy",
+        chainId: 80002,
+        urls: {
+          apiURL: "https://api-amoy.polygonscan.com/api",
+          browserURL: "https://amoy.polygonscan.com"
+        }
+      }
+    ]
   }
 };

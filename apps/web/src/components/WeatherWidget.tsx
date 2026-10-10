@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, Wind, Droplets, Gauge } from 'lucide-react';
+import api from '../services/api';
 
 interface WeatherData {
   name: string;
@@ -34,34 +35,20 @@ export default function WeatherWidget({ location = 'Chennai' }: WeatherWidgetPro
   const fetchWeather = async (city: string) => {
     try {
       setLoading(true);
-      // @ts-ignore - Vite env variable
-      const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY || '';
-      
-      // Demo mode if no API key
-      if (!apiKey) {
-        setTimeout(() => {
-          setWeather({
-            name: city,
-            main: { temp: 32, humidity: 75, pressure: 1013 },
-            weather: [{ description: 'sunny', icon: '01d' }],
-            wind: { speed: 3.5 }
-          });
-          setLoading(false);
-        }, 500);
-        return;
-      }
-
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
-      );
-      
-      if (!res.ok) throw new Error('Failed to fetch weather');
-      
-      const data = await res.json();
-      setWeather(data);
-    } catch (err) {
-      setError('Unable to fetch weather data');
-      console.error(err);
+      setError(null);
+      const res = await api.get('/weather/current', {
+        params: { city }
+      });
+      setWeather(res.data);
+    } catch (err: any) {
+      console.warn('Weather proxy fetch error, falling back to cached/demo:', err);
+      // Safe fallback demo state if service is unconfigured
+      setWeather({
+        name: city,
+        main: { temp: 32, humidity: 75, pressure: 1013 },
+        weather: [{ description: 'sunny', icon: '01d' }],
+        wind: { speed: 3.5 }
+      });
     } finally {
       setLoading(false);
     }

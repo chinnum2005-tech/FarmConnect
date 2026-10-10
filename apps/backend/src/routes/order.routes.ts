@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createOrder, getMyOrders, getFarmerOrders, updateOrderStatus } from '../controllers/order.controller';
+import { createOrder, getMyOrders, getFarmerOrders, getOrderById, updateOrderStatus } from '../controllers/order.controller';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -15,6 +15,9 @@ router.get('/my-orders', getMyOrders);
 
 // Get farmer's orders
 router.get('/farmer-orders', getFarmerOrders);
+
+// Get single order with authorization check
+router.get('/:orderId', getOrderById);
 
 // Update order status
 router.patch('/:orderId/status', updateOrderStatus);

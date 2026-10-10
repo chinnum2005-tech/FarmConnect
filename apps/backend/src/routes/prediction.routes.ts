@@ -7,7 +7,7 @@ import { computePredictionHash, anchorPrediction } from '../services/provenance.
 import { fetchLatestPrices } from '../services/agmarknet.service';
 
 const router = Router();
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 /**
  * Get yield prediction for a crop (manual/triggered by farmer)
@@ -91,7 +91,7 @@ router.post('/crop/:cropId', authenticate, async (req: AuthRequest, res: Respons
 
     // Call AI service for prediction (forwarding auth token)
     const response = await axios.post(
-      `${AI_SERVICE_URL}/yield/predict-yield`,
+      `${ML_SERVICE_URL}/yield/predict-yield`,
       {
         cropType: crop.type,
         areaHectares: crop.area,
@@ -210,7 +210,7 @@ router.post('/recommend/field/:fieldId', authenticate, async (req: AuthRequest, 
 
     // Call AI service for crop recommendation (forwarding auth token)
     const response = await axios.post(
-      `${AI_SERVICE_URL}/recommend/crop`,
+      `${ML_SERVICE_URL}/recommend/crop`,
       {
         N: latestSoil.N,
         P: latestSoil.P,

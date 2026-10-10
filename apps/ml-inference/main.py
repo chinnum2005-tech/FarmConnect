@@ -26,6 +26,10 @@ app.include_router(rag.router)
 async def root():
     return {"message": "Welcome to AgroTrace ML Inference Service", "status": "active"}
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "AgroTrace ML Inference Service"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)

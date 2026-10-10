@@ -12,7 +12,7 @@ FarmConnect is built as a **Monorepo** using Turborepo to orchestrate multiple d
 1. **Frontend (`apps/web`)**: React + TypeScript + Vite. Styled with Tailwind CSS. It is a fully functional Progressive Web App (PWA) with a Service Worker (`sw.js`) allowing for offline caching—vital for farmers in remote areas with spotty internet.
 2. **Backend API (`apps/backend`)**: Node.js + Express.js. Secured by JWT. It serves as the primary gateway for the frontend, communicating with the database.
 3. **Database Layer (`apps/backend/prisma`)**: Prisma ORM mapped to a robust **PostgreSQL** database (specifically tuned for Neon).
-4. **AI Service (`services/ai-service`)**: Python + FastAPI. Houses independent Machine Learning models for disease detection and yield prediction.
+4. **AI Service (`services/ai-service`)**: Python + FastAPI. Houses independent Machine Learning models for crop recommendation, fertilizer advisory, satellite NDVI analysis, and yield prediction.
 5. **Blockchain Service (`services/blockchain`)**: Hardhat environment for compiling and deploying Solidity Smart Contracts to the **Polygon** network.
 
 ---
@@ -53,11 +53,11 @@ Located in `services/blockchain/contracts`, this contract is the immutable ledge
 
 The `services/ai-service` folder runs a high-performance Python FastAPI server on port 8000. It handles heavy computational ML tasks asynchronously, keeping the Node.js backend fast.
 
-### 🔬 CNN Crop Disease Detection (`disease_predictor.py`)
-* **How it works:** When a farmer uploads a leaf image, the frontend sends it via `multipart/form-data` to the `/predict/disease` endpoint.
-* **The Model:** It utilizes **PyTorch** and **Torchvision**. It loads a **ResNet18** Convolutional Neural Network (CNN) architecture.
-* **Processing:** The image is resized, center-cropped to 224x224 pixels, and normalized using ImageNet standards. The tensor is passed through the network, outputting a Softmax probability distribution.
-* **Output:** It returns the specific disease (e.g., Leaf Blight, Powdery Mildew, Rust, or Healthy) and an exact confidence score (e.g., 96.5%).
+### 🌾 Crop & Fertilizer Advisory (`crop_advisor.py`, `fertilizer_advisor.py`)
+* **How it works:** Processes multi-feature soil profiles (N, P, K, pH, moisture) alongside meteorological conditions.
+* **The Models:** Powered by trained Scikit-learn estimators referencing verified agricultural datasets (including ICRISAT district baseline data and Kaggle fertilizer matrices).
+* **Output:** Delivers precise crop recommendations and soil-specific fertilizer prescriptions with confidence scoring.
+*(Note: Legacy leaf-image disease detection was completely removed per Directive 017 to focus the AI service on soil, weather, satellite NDVI, and yield intelligence.)*
 
 ### 📈 Yield Prediction (`yield_predictor.py`)
 * **How it works:** Uses **Scikit-learn** algorithms to process farm data.

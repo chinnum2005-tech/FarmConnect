@@ -35,10 +35,11 @@ export default function Marketplace() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutProcessing, setCheckoutProcessing] = useState(false);
   const [checkoutForm, setCheckoutForm] = useState({
-    cardName: 'Test User',
-    cardNumber: '4242 4242 4242 4242',
-    expiry: '12/26',
-    cvc: '123'
+    cardName: '',
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    address: ''
   });
   const [showMyOrdersModal, setShowMyOrdersModal] = useState(false);
   const [myOrders, setMyOrders] = useState<any[]>([]);
@@ -54,97 +55,19 @@ export default function Marketplace() {
       if (response.success && response.data) {
         setProducts(response.data);
       } else {
-        // Use mock data as fallback
-        setProducts(getMockProducts());
+        showToast('Failed to load products. Please try again.', 'error');
+        setProducts([]);
       }
     } catch (error) {
       console.error('Failed to load products:', error);
-      setProducts(getMockProducts());
+      showToast('Error connecting to server. Products unavailable.', 'error');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getMockProducts = (): Product[] => [
-    {
-      id: '1',
-      name: 'Organic Rice - Premium Quality',
-      farmName: 'Green Valley Farm',
-      price: 120,
-      unit: '5kg',
-      rating: 4.8,
-      image: '🌾',
-      certified: true,
-      location: 'Kerala',
-      cropType: 'RICE',
-      availableQuantity: 50,
-    },
-    {
-      id: '2',
-      name: 'Fresh Vegetables Combo',
-      farmName: 'Sunrise Organics',
-      price: 250,
-      unit: '3kg mix',
-      rating: 4.6,
-      image: '🥬',
-      certified: true,
-      location: 'Karnataka',
-      cropType: 'OTHER',
-      availableQuantity: 20,
-    },
-    {
-      id: '3',
-      name: 'Pure Farm Honey',
-      farmName: 'Mountain Bee Farms',
-      price: 350,
-      unit: '500ml',
-      rating: 4.9,
-      image: '🍯',
-      certified: true,
-      location: 'Himachal Pradesh',
-      cropType: 'OTHER',
-      availableQuantity: 15,
-    },
-    {
-      id: '4',
-      name: 'Whole Wheat Flour',
-      farmName: 'Punjab Grains Co.',
-      price: 80,
-      unit: '10kg',
-      rating: 4.5,
-      image: '🌾',
-      certified: false,
-      location: 'Punjab',
-      cropType: 'WHEAT',
-      availableQuantity: 100,
-    },
-    {
-      id: '5',
-      name: 'Organic Spices Kit',
-      farmName: 'Spice Garden',
-      price: 450,
-      unit: '6 spices x 100g',
-      rating: 4.7,
-      image: '🌶️',
-      certified: true,
-      location: 'Tamil Nadu',
-      cropType: 'OTHER',
-      availableQuantity: 5,
-    },
-    {
-      id: '6',
-      name: 'Fresh Fruits Basket',
-      farmName: 'Orchard Fresh',
-      price: 600,
-      unit: '5kg mixed',
-      rating: 4.8,
-      image: '🍎',
-      certified: true,
-      location: 'Maharashtra',
-      cropType: 'OTHER',
-      availableQuantity: 10,
-    },
-  ];
+
 
   const categories = [
     { id: 'ALL', name: 'All Products', icon: '🛒' },
@@ -203,42 +126,47 @@ export default function Marketplace() {
   };
 
   const processCheckout = async () => {
+    if (!checkoutForm.address.trim()) {
+      showToast('Please enter a shipping address', 'error');
+      return;
+    }
+    
     setCheckoutProcessing(true);
-    // Simulate mock payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
     
     try {
       if (selectedProduct) {
-        // Single Item Checkout
-        if (selectedProduct.id.length < 10) {
-          // Mock product bypass
-          console.log('Mock product checkout successful');
-          showToast('Payment successful! Order confirmed for ' + selectedProduct.name, 'success');
-        } else {
-          const response = await orderService.createOrder({
-            productId: selectedProduct.id,
-            quantity: orderQuantity,
-            totalAmount: selectedProduct.price * 1.05 * orderQuantity,
-            shippingAddress: 'Dummy Credit Card Checkout',
-          });
-          if (!response.success) throw new Error('Order creation failed');
-          showToast('Payment successful! Order confirmed.', 'success');
+        // Single Product Checkout
+        const response = await orderService.createOrder({
+          productId: selectedProduct.id,
+          quantity: orderQuantity,
+          shippingAddress: checkoutForm.address,
+        });
+        if (!response.success) throw new Error('Order creation failed');
+        
+        // Redirect to Stripe Checkout
+        if (response.data?.checkoutUrl) {
+          window.location.href = response.data.checkoutUrl;
+          return;
         }
+        
+        showToast('Payment intent created! Order confirmed.', 'success');
         setSelectedProduct(null);
       } else if (cart.length > 0) {
         // Cart Checkout
-        for (const item of cart) {
-          if (item.id.length < 10) continue; // Mock product bypass
-          
-          await orderService.createOrder({
-            productId: item.id,
-            quantity: item.cartQuantity || 1,
-            totalAmount: item.price * 1.05 * (item.cartQuantity || 1),
-            shippingAddress: 'Dummy Credit Card Checkout',
-          });
+        const response = await orderService.createOrder({
+          items: cart.map(item => ({ productId: item.id, quantity: item.cartQuantity || 1 })),
+          shippingAddress: checkoutForm.address,
+        });
+        if (!response.success) throw new Error('Order creation failed');
+        
+        // Redirect to Stripe Checkout
+        if (response.data?.checkoutUrl) {
+          window.location.href = response.data.checkoutUrl;
+          return;
         }
+
         setCart([]);
-        showToast('Payment successful! Cart orders confirmed.', 'success');
+        showToast('Payment intent created! Cart orders confirmed.', 'success');
       } else {
         throw new Error('Nothing to checkout');
       }
@@ -247,7 +175,7 @@ export default function Marketplace() {
       setShowCart(false);
     } catch (error: any) {
       console.error('Checkout error:', error);
-      showToast(error.response?.data?.message || 'Payment failed. Please try again.', 'error');
+      showToast(error.response?.data?.message || error.message || 'Payment failed. Please try again.', 'error');
     } finally {
       setCheckoutProcessing(false);
     }
@@ -803,29 +731,10 @@ export default function Marketplace() {
             </div>
             
             <div className="p-8">
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg text-blue-800 text-sm flex items-start gap-3">
-                <span className="text-xl">ℹ️</span>
-                <p>This is a test environment. Please use the pre-filled dummy credit card details to simulate a successful transaction.</p>
-              </div>
-
               <div className="space-y-4 mb-8">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name on Card</label>
-                  <input type="text" value={checkoutForm.cardName} onChange={e => setCheckoutForm({...checkoutForm, cardName: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                  <input type="text" value={checkoutForm.cardNumber} onChange={e => setCheckoutForm({...checkoutForm, cardNumber: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none tracking-widest font-mono" />
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                    <input type="text" value={checkoutForm.expiry} onChange={e => setCheckoutForm({...checkoutForm, expiry: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="MM/YY" />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                    <input type="text" value={checkoutForm.cvc} onChange={e => setCheckoutForm({...checkoutForm, cvc: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="123" />
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                  <textarea rows={3} value={checkoutForm.address} onChange={e => setCheckoutForm({...checkoutForm, address: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter your full shipping address..." required />
                 </div>
               </div>
 

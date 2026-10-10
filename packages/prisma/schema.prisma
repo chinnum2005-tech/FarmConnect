@@ -100,8 +100,28 @@ model User {
   distributorShipments Shipment[] @relation("DistributorShipments")
   chatMessages  ChatMessage[]
   verificationLogs VerificationLog[]
+  refreshTokens RefreshToken[]
   
   @@index([role])
+}
+
+model RefreshToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tokenHash String   @unique
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model StripeWebhookEvent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String   @unique
+  type        String
+  processedAt DateTime?
+  createdAt   DateTime @default(now())
 }
 
 // Farm model
@@ -209,15 +229,21 @@ model SupplyChainEvent {
   crop            Crop?     @relation(fields: [cropId], references: [id], onDelete: SetNull)
   product         Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
   metadata        String?   // Additional JSON data
-  transactionHash String?   @unique // Blockchain transaction hash
-  chainStatus     String?   @default("PENDING") // PENDING, CONFIRMED, FAILED
+  transactionHash String?   @unique // Real blockchain transaction hash (null when awaiting broadcast)
+  chainStatus     String?   @default("RECORDED_DB") // RECORDED_DB, SUBMITTED, IN_BLOCK, CONFIRMED, FAILED
   blockNumber     Int?
+  confirmations   Int?      @default(0)
+  evidenceHash    String?   // Deterministic 32-byte hex hash committed to contract
+  batchIdBytes32  String?   // Canonical bytes32 batch identifier
+  idempotencyKey  String?   @unique // Application-level idempotency key to prevent duplicate submissions
   verified        Boolean   @default(false)
   createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
 
   @@index([productId])
   @@index([eventType])
   @@index([cropId])
+  @@index([chainStatus])
 }
 
 // Audit log for compliance
@@ -268,6 +294,9 @@ model Order {
   consumerId      String      @db.ObjectId
   consumer        User        @relation(fields: [consumerId], references: [id])
   status          String      @default("PENDING")
+  paymentStatus   String      @default("UNPAID")
+  stripeSessionId String?     @unique
+  paymentIntentId String?     @unique
   totalPrice      Float
   shippingAddress String
   items           OrderItem[]

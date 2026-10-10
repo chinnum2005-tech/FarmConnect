@@ -71,7 +71,7 @@ apps/backend/
 ### 🗄️ Database Integration
 
 - ✅ **Prisma ORM** for type-safe queries
-- ✅ **PostgreSQL** database support
+- ✅ **MongoDB** database support
 - ✅ **Auto-generated Prisma client** from schema
 - ✅ **Relationships** with cascade deletes
 - ✅ **Indexes** for optimized queries
@@ -107,7 +107,7 @@ apps/backend/
 ### Prerequisites
 
 - Node.js 18+ installed
-- PostgreSQL database running
+- MongoDB database running
 - Prisma schema deployed
 
 ### Installation
@@ -123,7 +123,7 @@ npm install
 cp .env.example .env
 
 # Edit .env with your configuration
-# DATABASE_URL=postgresql://user:password@localhost:5432/farmconnect
+# DATABASE_URL=mongodb+srv://user:password@cluster.mongodb.net/farmconnect
 # JWT_SECRET=your-secret-key
 
 # Generate Prisma client

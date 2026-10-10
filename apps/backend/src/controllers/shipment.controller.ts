@@ -11,6 +11,10 @@ export const getMyShipments = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
+    if (req.user!.role !== 'DISTRIBUTOR' && req.user!.role !== 'ADMIN') {
+      throw new AppError('Access restricted to distributors', 403);
+    }
+
     const shipments = await prisma.shipment.findMany({
       where: { distributorId: userId },
       include: {
@@ -71,23 +75,35 @@ export const getMyShipments = async (req: AuthRequest, res: Response) => {
 };
 
 /**
+ * Valid shipment state transitions
+ */
+const VALID_SHIPMENT_TRANSITIONS: Record<string, string[]> = {
+  'PENDING_FARMER': ['ASSIGNED'], // Farmer prepares package and marks assigned to distributor pool
+  'ASSIGNED': ['PICKED_UP'],       // Assigned distributor picks up from farm
+  'PICKED_UP': ['IN_TRANSIT'],     // Assigned distributor starts transit
+  'IN_TRANSIT': ['DELIVERED'],     // Assigned distributor delivers to consumer
+  'DELIVERED': []                  // Terminal state
+};
+
+/**
  * Update shipment status
  */
 export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
   try {
     const { shipmentId, status, currentLocation, version } = req.body;
+    const userId = req.user!.id;
+    const userRole = req.user!.role;
 
     if (!shipmentId || !status) {
       throw new AppError('Shipment ID and status are required', 400);
     }
 
-    // Validate status
-    const validStatuses = ['PENDING_FARMER', 'ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
-    if (!validStatuses.includes(status)) {
-      throw new AppError('Invalid shipment status', 400);
+    // P0 Gate 3: Consumers are never authorized to update shipment status
+    if (userRole === 'CONSUMER') {
+      throw new AppError('Consumers are not authorized to update shipment status', 403);
     }
 
-    // Verify ownership
+    // Verify shipment existence
     const existingShipment = await prisma.shipment.findUnique({
       where: { id: shipmentId },
       include: {
@@ -108,50 +124,92 @@ export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
     if (!existingShipment) {
       throw new AppError('Shipment not found', 404);
     }
-    
-    // Check permissions
-    let isAuthorized = false;
-    
-    if (req.user!.role === 'ADMIN') {
-      isAuthorized = true;
-    } else if (req.user!.role === 'DISTRIBUTOR' && existingShipment.distributorId === req.user!.id) {
-      isAuthorized = true;
-    } else if (req.user!.role === 'FARMER') {
-      // Check if the farmer owns any product in this shipment's order
-      const isFarmerProduct = existingShipment.order.items.some(
-        item => item.product.crop.farm.userId === req.user!.id
-      );
-      if (isFarmerProduct) {
-        isAuthorized = true;
+
+    // Enforce valid state transitions
+    const allowedNext = VALID_SHIPMENT_TRANSITIONS[existingShipment.status] || [];
+    if (!allowedNext.includes(status)) {
+      throw new AppError(`Invalid shipment status transition from '${existingShipment.status}' to '${status}'`, 400);
+    }
+
+    // Transition-specific role & ownership validation
+    if (existingShipment.status === 'PENDING_FARMER' && status === 'ASSIGNED') {
+      // Farmer must own crops in this order (or admin)
+      if (userRole !== 'ADMIN') {
+        const isFarmerProduct = existingShipment.order.items.some(
+          item => item.product?.crop?.farm?.userId === userId
+        );
+        if (!isFarmerProduct) {
+          throw new AppError('Unauthorized: Only the originating farmer can prepare and mark shipment as ASSIGNED', 403);
+        }
+      }
+    } else if (['PICKED_UP', 'IN_TRANSIT', 'DELIVERED'].includes(status)) {
+      // Logistics updates require assigned distributor or admin
+      if (userRole !== 'ADMIN') {
+        if (userRole !== 'DISTRIBUTOR') {
+          throw new AppError('Only distributors are authorized to perform logistics updates', 403);
+        }
+        if (!existingShipment.distributorId) {
+          throw new AppError('Shipment must be claimed by a distributor before status can be updated', 400);
+        }
+        if (existingShipment.distributorId !== userId) {
+          throw new AppError('Unauthorized: Shipment is assigned to another distributor', 403);
+        }
       }
     }
 
-    if (!isAuthorized) {
-      throw new AppError('Unauthorized to update this shipment', 403);
-    }
+    // Concurrency-safe atomic database update wrapped in transaction
+    const shipment = await prisma.$transaction(async (tx) => {
+      const wherePredicate: any = {
+        id: shipmentId,
+        status: existingShipment.status, // Enforce exact current state in DB predicate to prevent state skipping or overwriting
+      };
 
-    // Optimistic locking check
-    if (version !== undefined && existingShipment.version !== version) {
-      throw new AppError('Conflict detected. Shipment has been modified by another transaction. Please refresh and try again.', 409, existingShipment);
-    }
+      // Verify distributor ownership is enforced directly in the database update predicate
+      if (userRole !== 'ADMIN' && ['PICKED_UP', 'IN_TRANSIT', 'DELIVERED'].includes(status)) {
+        wherePredicate.distributorId = userId;
+      }
 
-    const shipment = await prisma.shipment.update({
-      where: { id: shipmentId },
-      data: {
-        status,
-        currentLocation: currentLocation || null,
-        actualDelivery: status === 'DELIVERED' ? new Date() : null,
-        version: { increment: 1 }
-      },
-    });
+      if (version !== undefined) {
+        wherePredicate.version = version;
+      }
 
-    // Also update order status if shipment is delivered
-    if (status === 'DELIVERED') {
-      await prisma.order.update({
-        where: { id: shipment.orderId },
-        data: { status: 'DELIVERED' },
+      const updateResult = await tx.shipment.updateMany({
+        where: wherePredicate,
+        data: {
+          status,
+          currentLocation: currentLocation || null,
+          actualDelivery: status === 'DELIVERED' ? new Date() : null,
+          version: { increment: 1 }
+        },
       });
 
+      if (updateResult.count === 0) {
+        throw new AppError('Conflict detected. Shipment state was modified or claimed by another transaction.', 409);
+      }
+
+      // Synchronize Order status atomically within the same database transaction
+      if (status === 'PICKED_UP' || status === 'IN_TRANSIT') {
+        await tx.order.update({
+          where: { id: existingShipment.orderId },
+          data: { status: 'IN_TRANSIT', version: { increment: 1 } },
+        });
+      } else if (status === 'DELIVERED') {
+        await tx.order.update({
+          where: { id: existingShipment.orderId },
+          data: { status: 'DELIVERED', version: { increment: 1 } },
+        });
+      }
+
+      return tx.shipment.findUnique({
+        where: { id: shipmentId }
+      });
+    });
+
+    if (!shipment) {
+      throw new AppError('Shipment not found after update', 404);
+    }
+
+    if (status === 'DELIVERED') {
       // Record supply chain event
       const order = await prisma.order.findUnique({
         where: { id: shipment.orderId },
@@ -173,8 +231,8 @@ export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
               actorId: req.user!.id,
               location: currentLocation || order.shippingAddress,
               metadata: JSON.stringify(metadata),
-              chainStatus: 'PENDING',
-              transactionHash: `pending-recv-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+              chainStatus: 'RECORDED_DB',
+              transactionHash: null,
             },
           });
 
@@ -218,6 +276,9 @@ export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
  */
 export const getAvailableShipments = async (req: AuthRequest, res: Response) => {
   try {
+    if (req.user!.role !== 'DISTRIBUTOR' && req.user!.role !== 'ADMIN') {
+      throw new AppError('Access restricted to distributors', 403);
+    }
     const shipments = await prisma.shipment.findMany({
       where: {
         status: 'ASSIGNED',
@@ -280,22 +341,52 @@ export const claimShipment = async (req: AuthRequest, res: Response) => {
   try {
     const { shipmentId } = req.body;
     const userId = req.user!.id;
+    const userRole = req.user!.role;
 
-    const existingShipment = await prisma.shipment.findUnique({
-      where: { id: shipmentId }
+    if (!shipmentId) {
+      throw new AppError('Shipment ID is required', 400);
+    }
+
+    // P0 Gate 3: Require distributor role
+    if (userRole !== 'DISTRIBUTOR') {
+      throw new AppError('Only distributors are authorized to claim shipments', 403);
+    }
+
+    // P0 Gate 3: Concurrency-safe atomic claim
+    const updateResult = await prisma.shipment.updateMany({
+      where: {
+        id: shipmentId,
+        status: 'ASSIGNED',
+        OR: [
+          { distributorId: null },
+          { distributorId: { isSet: false } }
+        ]
+      },
+      data: {
+        distributorId: userId,
+        version: { increment: 1 }
+      }
     });
 
-    if (!existingShipment) {
-      throw new AppError('Shipment not found', 404);
+    if (updateResult.count === 0) {
+      const existingShipment = await prisma.shipment.findUnique({
+        where: { id: shipmentId }
+      });
+
+      if (!existingShipment) {
+        throw new AppError('Shipment not found', 404);
+      }
+      if (existingShipment.distributorId) {
+        throw new AppError('Shipment is already claimed by another distributor', 409);
+      }
+      if (existingShipment.status !== 'ASSIGNED') {
+        throw new AppError(`Shipment is in status '${existingShipment.status}' and cannot be claimed (must be ASSIGNED)`, 400);
+      }
+      throw new AppError('Unable to claim shipment', 400);
     }
 
-    if (existingShipment.distributorId !== null) {
-      throw new AppError('Shipment already claimed', 400);
-    }
-
-    const shipment = await prisma.shipment.update({
-      where: { id: shipmentId },
-      data: { distributorId: userId },
+    const shipment = await prisma.shipment.findUnique({
+      where: { id: shipmentId }
     });
 
     res.json({

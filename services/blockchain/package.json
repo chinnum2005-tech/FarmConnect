@@ -6,6 +6,8 @@
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
     "deploy": "npx hardhat run scripts/deploy.ts",
+    "deploy:local": "npx hardhat run scripts/deploy-provenance.ts --network localhost",
+    "deploy:amoy": "npx hardhat run scripts/deploy-provenance.ts --network amoy",
     "deploy:mumbai": "npx hardhat run scripts/deploy.ts --network mumbai"
   },
   "devDependencies": {

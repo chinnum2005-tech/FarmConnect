@@ -1,4 +1,4 @@
-import { Leaf, User, Menu, X, LogOut, Moon, Sun, Microscope, Shield, Camera } from 'lucide-react';
+import { Leaf, User, Menu, X, LogOut, Moon, Sun, Shield, Camera } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
@@ -72,15 +72,6 @@ export default function Navbar({ user: propUser, onLogout: propLogout }: NavbarP
             {/* Global Search */}
             <GlobalSearch />
 
-            {(!currentUser || currentUser?.role === 'FARMER' || currentUser?.role === 'ADMIN') && (
-              <Link
-                to="/disease-detection"
-                className="flex items-center gap-1.5 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium text-sm whitespace-nowrap"
-              >
-                <Microscope className="flex-shrink-0 h-4 w-4" />
-                <span className="hidden xl:inline whitespace-nowrap">AI Disease</span>
-              </Link>
-            )}
 
             <Link
               to="/blockchain"
@@ -188,11 +179,6 @@ export default function Navbar({ user: propUser, onLogout: propLogout }: NavbarP
           <div className="lg:hidden py-4 border-t border-gray-100 dark:border-gray-800">
             <div className="flex flex-col space-y-2 px-2">
               <GlobalSearch />
-              {(!currentUser || currentUser?.role === 'FARMER' || currentUser?.role === 'ADMIN') && (
-                <Link to="/disease-detection" className="flex items-center gap-2 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl font-medium" onClick={() => setIsOpen(false)}>
-                  <Microscope className="h-4 w-4 text-green-600" /> AI Disease Detection
-                </Link>
-              )}
               <Link to="/blockchain" className="flex items-center gap-2 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl font-medium" onClick={() => setIsOpen(false)}>
                 <Shield className="h-4 w-4 text-purple-600" /> Blockchain Explorer
               </Link>

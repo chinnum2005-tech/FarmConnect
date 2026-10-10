@@ -551,7 +551,7 @@ Before presenting to judges:
    - AR product scanning
 
 3. **AI Enhancements:**
-   - Image recognition for crop diseases
+   - Soil and crop suitability optimization
    - Predictive maintenance alerts
    - Price forecasting
    - Demand prediction
