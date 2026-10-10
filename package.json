@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run db:generate && npm run build -w @agritrace/backend",
+    "build": "npm run db:generate && npm run build -w @agritrace/backend && node scripts/verify-backend-build.js",
     "start": "npm run start -w @agritrace/backend",
     "db:generate": "cd packages/prisma && npx prisma generate",
     "db:push": "cd packages/prisma && npx prisma db push"
