@@ -73,6 +73,12 @@ export class EventLifecycleService {
         ? eventTypeInput
         : toRegistryEventType(eventTypeInput);
 
+    // Derive canonical string event name matching Prisma's EventType enum (e.g. 'HARVESTED', 'PLANTED')
+    const prismaEventType =
+      typeof eventTypeInput === 'string' && isNaN(Number(eventTypeInput))
+        ? eventTypeInput.trim().toUpperCase().replace(/[\s-]+/g, '_')
+        : (RegistryEventType[regEventType] || 'PLANTED');
+
     const idempotencyKey =
       clientKey || `idem-${batchId}-${regEventType}-${evidenceHash}`;
 
@@ -186,7 +192,7 @@ export class EventLifecycleService {
         data: {
           productId: productId || null,
           cropId: cropId || null,
-          eventType: regEventType as any,
+          eventType: prismaEventType as any,
           timestamp: new Date(),
           location: location || null,
           actorId,

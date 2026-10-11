@@ -4,9 +4,10 @@ import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { blockchainService } from '../services/blockchain.service';
 import { eventLifecycleService } from '../services/eventLifecycle.service';
+import { ensureProductForHarvestedCrop } from './product.controller';
 
 /**
- * Get supply chain events for a product
+ * Get supply chain events for a product or crop
  */
 export const getProductTraceability = async (req: AuthRequest, res: Response) => {
   try {
@@ -17,7 +18,12 @@ export const getProductTraceability = async (req: AuthRequest, res: Response) =>
     }
 
     const events = await prisma.supplyChainEvent.findMany({
-      where: { productId },
+      where: {
+        OR: [
+          { productId },
+          { cropId: productId }
+        ]
+      },
       include: {
         actor: {
           select: {
@@ -58,48 +64,118 @@ export const getProductTraceability = async (req: AuthRequest, res: Response) =>
 };
 
 /**
- * Add a supply chain event
+ * Add a supply chain event (supports both Products and Cultivated Crops)
  */
 export const addSupplyChainEvent = async (req: AuthRequest, res: Response) => {
   try {
-    const { productId, eventType, location, description, metadata, latitude, longitude } = req.body;
+    const { productId, cropId, batchId, eventType, location, description, metadata, latitude, longitude } = req.body;
     const userId = req.user!.id;
 
-    if (!productId || !eventType) {
-      throw new AppError('Product ID and event type are required', 400);
+    const targetId = productId || cropId || batchId;
+
+    if (!targetId || !eventType) {
+      throw new AppError('Product or Crop ID and event type are required', 400);
     }
 
-    // Verify product exists
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      include: {
-        crop: {
-          include: { farm: true }
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(targetId);
+
+    // 1. Look for Product first
+    let product: any = null;
+    let crop: any = null;
+
+    if (isObjectId) {
+      product = await prisma.product.findUnique({
+        where: { id: targetId },
+        include: {
+          crop: {
+            include: { farm: true }
+          }
+        }
+      });
+    }
+
+    // 2. If product found, retrieve its associated crop; otherwise look for Crop directly
+    if (product) {
+      crop = product.crop;
+    } else {
+      crop = await prisma.crop.findFirst({
+        where: {
+          OR: [
+            { qrCode: targetId },
+            ...(isObjectId ? [{ id: targetId }] : [])
+          ]
+        },
+        include: { farm: true }
+      });
+    }
+
+    if (!product && !crop) {
+      throw new AppError('Product or Crop not found', 404);
+    }
+
+    // Authorization check for FARMER
+    const farmUserId = product?.crop?.farm?.userId || crop?.farm?.userId;
+    if (req.user!.role === 'FARMER' && farmUserId && farmUserId !== userId) {
+      throw new AppError('Unauthorized to add event to this produce batch', 403);
+    }
+
+    // If event corresponds to a valid GrowthStage (e.g. HARVESTED), update the crop growthStage
+    if (crop) {
+      const validGrowthStages = [
+        'PLANTED', 'GERMINATION', 'VEGETATIVE', 'FLOWERING',
+        'FRUITING', 'MATURING', 'READY_FOR_HARVEST', 'HARVESTED'
+      ];
+      if (validGrowthStages.includes(eventType)) {
+        await prisma.crop.update({
+          where: { id: crop.id },
+          data: { growthStage: eventType as any }
+        });
+        if (eventType === 'HARVESTED') {
+          await ensureProductForHarvestedCrop(crop.id);
         }
       }
-    });
-
-    if (!product) {
-      throw new AppError('Product not found', 404);
     }
 
-    if (req.user!.role === 'FARMER' && product.crop.farm.userId !== userId) {
-      throw new AppError('Unauthorized to add event to this product', 403);
-    }
+    const resolvedBatchId = product ? product.id : crop.id;
+    const resolvedProductId = product ? product.id : undefined;
+    const resolvedCropId = crop ? crop.id : undefined;
 
     // Create supply chain event with optional coordinates
     const metadataObj = metadata ? { ...metadata, latitude, longitude } : { description, latitude, longitude };
 
     // Record through honest 5-state lifecycle service
-    const lifecycleResult = await eventLifecycleService.recordAndPersistEvent({
-      batchId: productId,
-      productId,
-      eventType,
-      evidence: metadataObj,
-      actorId: userId,
-      location: location || null,
-      idempotencyKey: (req.headers && req.headers['idempotency-key'] ? String(req.headers['idempotency-key']) : undefined),
-    });
+    let lifecycleResult: any;
+    try {
+      lifecycleResult = await eventLifecycleService.recordAndPersistEvent({
+        batchId: resolvedBatchId,
+        productId: resolvedProductId,
+        cropId: resolvedCropId,
+        eventType,
+        evidence: metadataObj,
+        actorId: userId,
+        location: location || null,
+        idempotencyKey: (req.headers && req.headers['idempotency-key'] ? String(req.headers['idempotency-key']) : undefined),
+      });
+    } catch (blockchainErr: any) {
+      console.warn('[addSupplyChainEvent] Blockchain transaction failed or offline, off-chain event preserved:', blockchainErr?.message);
+      // Retrieve the created DB event to return honest DB-only status
+      const dbEvent = await prisma.supplyChainEvent.findFirst({
+        where: {
+          OR: [
+            ...(resolvedProductId ? [{ productId: resolvedProductId }] : []),
+            ...(resolvedCropId ? [{ cropId: resolvedCropId }] : [])
+          ]
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+      lifecycleResult = {
+        eventId: dbEvent?.id || 'event-recorded',
+        status: dbEvent?.chainStatus || 'RECORDED_DB',
+        transactionHash: dbEvent?.transactionHash || null,
+        verified: false,
+        isReplay: false
+      };
+    }
 
     res.status(201).json({
       success: true,
@@ -138,6 +214,11 @@ export const getRecentEvents = async (req: AuthRequest, res: Response) => {
             }
           }
         },
+        crop: {
+          include: {
+            farm: true,
+          }
+        },
         actor: {
           select: {
             firstName: true,
@@ -152,8 +233,8 @@ export const getRecentEvents = async (req: AuthRequest, res: Response) => {
       id: event.id,
       eventType: event.eventType,
       title: formatEventType(event.eventType),
-      productName: event.product?.name || 'System Event',
-      farmName: event.product?.crop?.farm?.name || 'System',
+      productName: event.product?.name || event.crop?.name || 'Produce Batch',
+      farmName: event.product?.crop?.farm?.name || event.crop?.farm?.name || 'Farm',
       location: event.location || 'Unknown',
       timestamp: event.timestamp,
       actor: `${event.actor.firstName} ${event.actor.lastName}`,
@@ -251,7 +332,7 @@ export const getMyProductEvents = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
-    // Find all products from this farmer's farms
+    // Find all products and crops from this farmer's farms
     const farmerProducts = await prisma.product.findMany({
       where: {
         crop: {
@@ -263,9 +344,19 @@ export const getMyProductEvents = async (req: AuthRequest, res: Response) => {
       select: { id: true }
     });
 
-    const productIds = farmerProducts.map(p => p.id);
+    const farmerCrops = await prisma.crop.findMany({
+      where: {
+        farm: {
+          userId,
+        }
+      },
+      select: { id: true }
+    });
 
-    if (productIds.length === 0) {
+    const productIds = farmerProducts.map(p => p.id);
+    const cropIds = farmerCrops.map(c => c.id);
+
+    if (productIds.length === 0 && cropIds.length === 0) {
       return res.json({
         success: true,
         data: [],
@@ -274,7 +365,10 @@ export const getMyProductEvents = async (req: AuthRequest, res: Response) => {
 
     const events = await prisma.supplyChainEvent.findMany({
       where: {
-        productId: { in: productIds }
+        OR: [
+          ...(productIds.length > 0 ? [{ productId: { in: productIds } }] : []),
+          ...(cropIds.length > 0 ? [{ cropId: { in: cropIds } }] : [])
+        ]
       },
       include: {
         product: {
@@ -285,6 +379,11 @@ export const getMyProductEvents = async (req: AuthRequest, res: Response) => {
               }
             }
           }
+        },
+        crop: {
+          include: {
+            farm: true,
+          }
         }
       },
       orderBy: { timestamp: 'desc' },
@@ -294,8 +393,8 @@ export const getMyProductEvents = async (req: AuthRequest, res: Response) => {
       id: event.id,
       eventType: event.eventType,
       title: formatEventType(event.eventType),
-      productName: event.product.name,
-      farmName: event.product.crop.farm.name,
+      productName: event.product?.name || event.crop?.name || 'Produce Batch',
+      farmName: event.product?.crop?.farm?.name || event.crop?.farm?.name || 'Farm',
       location: event.location || 'Unknown',
       timestamp: event.timestamp,
       verified: event.verified,

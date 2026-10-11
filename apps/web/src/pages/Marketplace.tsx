@@ -21,7 +21,7 @@ interface Product {
   availableQuantity?: number;
 }
 
-export function getProductCategory(product: { cropType?: string; name?: string }): string {
+function getProductCategory(product: { cropType?: string; name?: string }): string {
   const type = (product.cropType || '').toUpperCase().trim();
   const name = (product.name || '').toLowerCase().trim();
 

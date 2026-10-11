@@ -59,8 +59,16 @@ where python >nul 2>nul
 if errorlevel 1 (
     if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
         set "PATH=%LOCALAPPDATA%\Programs\Python\Python311;%LOCALAPPDATA%\Programs\Python\Python311\Scripts;%PATH%"
+    ) else if exist "%LOCALAPPDATA%\Programs\Python\Python312\python.exe" (
+        set "PATH=%LOCALAPPDATA%\Programs\Python\Python312;%LOCALAPPDATA%\Programs\Python\Python312\Scripts;%PATH%"
+    ) else if exist "%LOCALAPPDATA%\Programs\Python\Python310\python.exe" (
+        set "PATH=%LOCALAPPDATA%\Programs\Python\Python310;%LOCALAPPDATA%\Programs\Python\Python310\Scripts;%PATH%"
     ) else if exist "C:\Python311\python.exe" (
         set "PATH=C:\Python311;C:\Python311\Scripts;%PATH%"
+    ) else if exist "C:\Python312\python.exe" (
+        set "PATH=C:\Python312;C:\Python312\Scripts;%PATH%"
+    ) else if exist ".venv\Scripts\python.exe" (
+        set "PATH=%~dp0.venv\Scripts;%PATH%"
     )
 )
 
@@ -127,23 +135,12 @@ if errorlevel 1 (
 :python_deps_done
 echo.
 
-REM 6. Hardhat Blockchain Node & Smart Contracts
-echo [6/6] Checking Blockchain Node & Services...
-netstat -ano -p tcp | findstr "LISTENING" | findstr ":8545" >nul
-if errorlevel 1 (
-    echo [INFO] Starting Hardhat Local Blockchain Node...
-    start "AgroTrace - Hardhat Blockchain" cmd /k "cd /d "%~dp0blockchain" && echo Starting Hardhat node on http://localhost:8545 ... && npx.cmd hardhat node"
-    ping 127.0.0.1 -n 6 >nul
-) else (
-    echo [INFO] Hardhat Node is already active on port 8545.
+REM 6. Port Check & Stale Process Cleanup
+echo [6/6] Verifying Service Ports & Freeing Stale Background Processes...
+for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr /R /C:":8545 .*LISTENING" /C:":3001 .*LISTENING" /C:":5173 .*LISTENING" /C:":8000 .*LISTENING"') do (
+    taskkill /F /PID %%a >nul 2>nul
 )
-
-if exist "blockchain\scripts\deploy.js" (
-    echo [INFO] Checking Smart Contract deployment to local Hardhat node...
-    cd blockchain
-    call npx.cmd hardhat run scripts/deploy.js --network localhost >nul 2>nul
-    cd ..
-)
+echo [OK] Ports 8545, 3001, 5173, 8000 cleared for fresh consoles.
 echo.
 
 echo ==================================================================
@@ -151,36 +148,33 @@ echo    STARTING ALL PLATFORM SERVICES IN SEPARATE WINDOWS
 echo ==================================================================
 echo.
 
-REM 1. Backend API
-netstat -ano -p tcp | findstr "LISTENING" | findstr ":3001" >nul
-if errorlevel 1 (
-    echo [Service 1/3] Starting Backend API Server on Port 3001...
-    start "AgroTrace - Backend API" cmd /k "cd /d "%~dp0apps\backend" && echo Starting backend on http://localhost:3001 ... && npm.cmd run dev"
-    ping 127.0.0.1 -n 3 >nul
-) else (
-    echo [INFO] Backend API is already running on port 3001.
+REM 1. Hardhat Blockchain Node
+echo [Service 1/4] Starting Hardhat Local Blockchain Node on Port 8545...
+start "AgroTrace - Hardhat Blockchain" cmd /k "cd /d "%~dp0blockchain" && echo Starting Hardhat node on http://localhost:8545 ... && npx.cmd hardhat node"
+ping 127.0.0.1 -n 6 >nul
+
+if exist "blockchain\scripts\deploy.js" (
+    echo [INFO] Checking Smart Contract deployment to local Hardhat node...
+    cd blockchain
+    call npx.cmd hardhat run scripts/deploy.js --network localhost >nul 2>nul
+    cd ..
 )
 
-REM 2. Web Frontend
-netstat -ano -p tcp | findstr "LISTENING" | findstr ":5173" >nul
-if errorlevel 1 (
-    echo [Service 2/3] Starting Web Frontend on Port 5173...
-    start "AgroTrace - Web Frontend" cmd /k "cd /d "%~dp0apps\web" && echo Starting frontend on http://localhost:5173 ... && npm.cmd run dev"
-    ping 127.0.0.1 -n 3 >nul
-) else (
-    echo [INFO] Web Frontend is already running on port 5173.
-)
+REM 2. Backend API
+echo [Service 2/4] Starting Backend API Server on Port 3001...
+start "AgroTrace - Backend API" cmd /k "cd /d "%~dp0apps\backend" && echo Starting backend on http://localhost:3001 ... && npm.cmd run dev"
+ping 127.0.0.1 -n 3 >nul
 
-REM 3. AI Service
+REM 3. Web Frontend
+echo [Service 3/4] Starting Web Frontend on Port 5173...
+start "AgroTrace - Web Frontend" cmd /k "cd /d "%~dp0apps\web" && echo Starting frontend on http://localhost:5173 ... && npm.cmd run dev"
+ping 127.0.0.1 -n 3 >nul
+
+REM 4. AI Service
 if "%PYTHON_AVAILABLE%" EQU "0" (
     if exist "apps\ml-inference\main.py" (
-        netstat -ano -p tcp | findstr "LISTENING" | findstr ":8000" >nul
-        if errorlevel 1 (
-            echo [Service 3/3] Starting AI Inference Service on Port 8000...
-            start "AgroTrace - AI Service" cmd /k "cd /d "%~dp0apps\ml-inference" && echo Starting AI service on http://localhost:8000 ... && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-        ) else (
-            echo [INFO] AI Inference Service is already running on port 8000.
-        )
+        echo [Service 4/4] Starting AI Inference Service on Port 8000...
+        start "AgroTrace - AI Service" cmd /k "cd /d "%~dp0apps\ml-inference" && echo Starting AI service on http://localhost:8000 ... && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     )
 )
 

@@ -1,5 +1,6 @@
 import { verifyProduct } from '../controllers/verify.controller';
 import { createCrop } from '../controllers/crop.controller';
+import { addSupplyChainEvent } from '../controllers/supplyChain.controller';
 import { eventLifecycleService } from '../services/eventLifecycle.service';
 import { blockchainService, RegistryEventType } from '../services/blockchain.service';
 import { AppError } from '../middleware/errorHandler';
@@ -347,5 +348,123 @@ describe('Directive 059: Regression Tests for Confirmed AgroTrace Fixes', () => 
       expect(persisted.transactionHash).toBeNull(); // NEVER an invented placeholder
       expect(persisted.verified).toBe(false);
     });
+
+    it('addSupplyChainEvent updates crop growthStage to HARVESTED when journey is updated', async () => {
+      const cropId = '666666666666666666666666';
+      const farmerUserId = 'farmer-user-123';
+      const mockCrop = {
+        id: cropId,
+        name: 'Wheat Batch Alpha',
+        growthStage: 'PLANTED',
+        farm: { userId: farmerUserId }
+      };
+
+      const prismaModule = require('../database/prisma').default;
+      jest.spyOn(prismaModule.product, 'findUnique').mockResolvedValue(null);
+      jest.spyOn(prismaModule.crop, 'findFirst').mockResolvedValue(mockCrop as any);
+      const cropUpdateSpy = jest.spyOn(prismaModule.crop, 'update').mockResolvedValue({
+        ...mockCrop,
+        growthStage: 'HARVESTED'
+      } as any);
+
+      jest.spyOn(eventLifecycleService, 'recordAndPersistEvent').mockResolvedValue({
+        eventId: 'evt-harvest-1',
+        status: 'RECORDED_DB',
+        transactionHash: null,
+        blockNumber: null,
+        confirmations: 0,
+        evidenceHash: '0xabc',
+        batchIdBytes32: '0x123',
+        isReplay: false,
+        verified: false,
+      });
+
+      const req: any = {
+        user: { id: farmerUserId, role: 'FARMER' },
+        body: {
+          productId: cropId,
+          eventType: 'HARVESTED',
+          location: 'Field Sector 4',
+          description: 'Harvested prime yield'
+        },
+        headers: {}
+      };
+      const res: any = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+
+      await addSupplyChainEvent(req, res);
+
+      expect(cropUpdateSpy).toHaveBeenCalledWith({
+        where: { id: cropId },
+        data: { growthStage: 'HARVESTED' }
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          message: 'Supply chain event recorded successfully'
+        })
+      );
+    });
+
+    it('addSupplyChainEvent returns 404 when target crop or product does not exist', async () => {
+      const nonExistentId = '666666666666666666666667';
+      const prismaModule = require('../database/prisma').default;
+      jest.spyOn(prismaModule.product, 'findUnique').mockResolvedValue(null);
+      jest.spyOn(prismaModule.crop, 'findFirst').mockResolvedValue(null);
+
+      const req: any = {
+        user: { id: 'farmer-1', role: 'FARMER' },
+        body: {
+          productId: nonExistentId,
+          eventType: 'HARVESTED',
+        },
+        headers: {}
+      };
+      const res: any = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+      await expect(addSupplyChainEvent(req, res)).rejects.toThrow('Product or Crop not found');
+    });
+
+    it('ensureProductForHarvestedCrop auto-provisions active marketplace product for harvested crop', async () => {
+      const { ensureProductForHarvestedCrop } = require('../controllers/product.controller');
+      const prismaModule = require('../database/prisma').default;
+
+      const mockHarvestedCrop = {
+        id: '666666666666666666666668',
+        name: 'Organic Tomatoes',
+        type: 'OTHER',
+        growthStage: 'HARVESTED',
+        estimatedYield: 2500,
+        actualYield: 2400,
+        qrCode: 'FARMCONNECT-666666666666666666666668',
+        farm: { location: { address: 'Ludhiana, Punjab' }, user: { firstName: 'Ramesh', lastName: 'Kumar' } },
+        products: []
+      };
+
+      jest.spyOn(prismaModule.crop, 'findUnique').mockResolvedValue(mockHarvestedCrop as any);
+      const productCreateSpy = jest.spyOn(prismaModule.product, 'create').mockResolvedValue({
+        id: 'prod-tomato-1',
+        name: 'Organic Tomatoes',
+        cropId: mockHarvestedCrop.id,
+        quantity: 2400,
+        price: 40,
+        status: 'ACTIVE'
+      } as any);
+
+      const createdProduct = await ensureProductForHarvestedCrop(mockHarvestedCrop.id);
+      expect(createdProduct).toBeDefined();
+      expect(productCreateSpy).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({
+          name: 'Organic Tomatoes',
+          cropId: mockHarvestedCrop.id,
+          status: 'ACTIVE',
+          price: 40
+        })
+      }));
+    });
   });
 });
+

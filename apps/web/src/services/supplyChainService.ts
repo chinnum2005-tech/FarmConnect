@@ -17,11 +17,15 @@ export const supplyChainService = {
    * Add a supply chain event (distributor/farmer/consumer)
    */
   addSupplyChainEvent: async (eventData: {
-    productId: string;
+    productId?: string;
+    cropId?: string;
+    batchId?: string;
     eventType: string;
     location?: string;
     description?: string;
     metadata?: any;
+    latitude?: number;
+    longitude?: number;
   }) => {
     const response = await api.post('/api/supply-chain/add', eventData);
     return response.data;

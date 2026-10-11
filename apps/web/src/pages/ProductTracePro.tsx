@@ -59,9 +59,10 @@ export default function ProductTracePro() {
   
   // Add Event Modal State
   const [showAddEventModal, setShowAddEventModal] = useState(false);
+  const [loadedCropId, setLoadedCropId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newEvent, setNewEvent] = useState({
-    eventType: 'PROCESSED',
+    eventType: 'HARVESTED',
     location: '',
     description: '',
   });
@@ -102,6 +103,9 @@ export default function ProductTracePro() {
       
       if (response.success && response.data) {
         const { crop, farm, supplyChainEvents, predictions } = response.data;
+        if (crop?.id) {
+          setLoadedCropId(crop.id);
+        }
         const loadedEvents = supplyChainEvents || [];
         setEvents(loadedEvents);
 
@@ -189,17 +193,18 @@ export default function ProductTracePro() {
       setIsSubmitting(true);
       await supplyChainService.addSupplyChainEvent({
         productId,
+        cropId: loadedCropId || undefined,
         eventType: newEvent.eventType,
         location: newEvent.location,
         description: newEvent.description,
       });
       setShowAddEventModal(false);
-      setNewEvent({ eventType: 'PROCESSED', location: '', description: '' });
+      setNewEvent({ eventType: 'HARVESTED', location: '', description: '' });
       // Refresh timeline
       await loadTraceability(productId);
     } catch (err: any) {
       console.error('Failed to add event:', err);
-      alert(err.message || 'Failed to add event. Make sure you are authorized.');
+      alert(err.response?.data?.message || err.message || 'Failed to add event. Make sure you are authorized.');
     } finally {
       setIsSubmitting(false);
     }

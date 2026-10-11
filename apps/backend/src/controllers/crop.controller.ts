@@ -3,6 +3,7 @@ import prisma from '../database/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { CreateCropInput, UpdateCropStageInput } from '../validators/schemas';
+import { ensureProductForHarvestedCrop } from './product.controller';
 
 // Get all crops (admin only)
 export const getAllCrops = async (req: AuthRequest, res: Response) => {
@@ -222,6 +223,10 @@ export const updateCropStage = async (req: AuthRequest, res: Response) => {
         version: { increment: 1 } 
       },
     });
+
+    if (growthStage === 'HARVESTED') {
+      await ensureProductForHarvestedCrop(updatedCrop.id);
+    }
 
     res.json({ 
       success: true, 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import MacDock, { DockItem } from '../components/ui/MacDock';
 import { 
@@ -8,7 +9,7 @@ import {
   Camera, Shield, AlertTriangle, ArrowRight, Sparkles, X,
   Satellite, Edit3, Check, Loader2, RefreshCw
 } from 'lucide-react';
-import { cropService, farmService, verifyService, orderService } from '../services';
+import { cropService, farmService, verifyService, orderService, supplyChainService } from '../services';
 import { predictionService, YieldPredictionResult } from '../services/predictionService';
 import { QRCodeSVG } from 'qrcode.react';
 import { 
@@ -25,6 +26,7 @@ import { toast } from '../components/Toast';
 const COLORS = ['#16a34a', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 export default function FarmerDashboard() {
+  const navigate = useNavigate();
   const [crops, setCrops] = useState<any[]>([]);
   const [farm, setFarm] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,7 @@ export default function FarmerDashboard() {
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedCrop, setSelectedCrop] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'crops' | 'ndvi' | 'recommendations' | 'orders'>('overview');
+  const [harvestingCropId, setHarvestingCropId] = useState<string | null>(null);
 
   // Add Crop Modal State
   const [isAddCropModalOpen, setIsAddCropModalOpen] = useState(false);
@@ -284,6 +287,25 @@ export default function FarmerDashboard() {
     } catch (error) {
       console.error('Failed to dispatch order:', error);
       toast.error('Failed to dispatch order. Please try again.');
+    }
+  };
+
+  const handleHarvestCrop = async (crop: any) => {
+    try {
+      setHarvestingCropId(crop.id);
+      await supplyChainService.addSupplyChainEvent({
+        cropId: crop.id,
+        eventType: 'HARVESTED',
+        location: (farm?.location as any)?.address || 'Farm Field',
+        description: `Successfully harvested ${crop.name} batch. Transferred produce to consumer marketplace.`,
+      });
+      toast.success(`🌾 ${crop.name} harvested! It is now active on the Consumer Marketplace.`);
+      await loadDashboardData();
+    } catch (err: any) {
+      console.error('Failed to harvest crop:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to harvest crop.');
+    } finally {
+      setHarvestingCropId(null);
     }
   };
 
@@ -822,18 +844,39 @@ export default function FarmerDashboard() {
 
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
+                        {crop.growthStage !== 'HARVESTED' ? (
+                          <button
+                            onClick={() => handleHarvestCrop(crop)}
+                            disabled={harvestingCropId === crop.id}
+                            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
+                          >
+                            {harvestingCropId === crop.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <span>🌾 Harvest Crop</span>
+                            )}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => navigate('/marketplace')}
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                          >
+                            🛍️ View in Marketplace
+                          </button>
+                        )}
                         <button
                           onClick={() => handleGenerateQR(crop.id)}
-                          className="flex-1 bg-green-600 text-white py-2.5 rounded-xl hover:bg-green-700 transition text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                          className="px-3 bg-green-600 text-white py-2.5 rounded-xl hover:bg-green-700 transition text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                          title="Generate QR Code"
                         >
                           <QrCode className="h-4 w-4" />
-                          Generate QR
                         </button>
                         <button
                           onClick={() => window.open(`/trace/${crop.id}`, '_blank')}
-                          className="px-4 bg-slate-100 text-slate-700 py-2.5 rounded-xl hover:bg-slate-200 transition text-xs font-semibold"
+                          className="px-3 bg-slate-100 text-slate-700 py-2.5 rounded-xl hover:bg-slate-200 transition text-xs font-semibold"
+                          title="View Trace"
                         >
-                          View Trace
+                          Trace
                         </button>
                       </div>
                     </motion.div>

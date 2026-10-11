@@ -44,59 +44,46 @@ try {
 }
 Pop-Location
 
-# 4. Check Ports
-Write-Host "[4/6] Checking Port Availability..." -ForegroundColor Yellow
-function Test-PortOpen ($port) {
+# 4. Check Ports & Clean Stale Background Instances
+Write-Host "[4/6] Freeing Service Ports & Clearing Stale Background Processes..." -ForegroundColor Yellow
+$servicePorts = @(8545, 3001, 5173, 8000)
+foreach ($p in $servicePorts) {
     try {
-        $tcp = New-Object System.Net.Sockets.TcpClient
-        $tcp.Connect("127.0.0.1", $port)
-        $tcp.Close()
-        return $true
-    } catch {
-        return $false
-    }
+        $conns = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue
+        if ($conns) {
+            foreach ($conn in $conns) {
+                Write-Host "Freeing occupied port $p (PID: $($conn.OwningProcess))..." -ForegroundColor DarkGray
+                Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+            }
+        }
+    } catch {}
 }
-
-$hardhatActive = Test-PortOpen 8545
-$backendActive = Test-PortOpen 3001
-$webActive = Test-PortOpen 5173
-$aiActive = Test-PortOpen 8000
+Write-Host "[OK] Service ports (8545, 3001, 5173, 8000) ready for fresh consoles." -ForegroundColor Green
 
 # 5. Smart Contracts & Hardhat Node
-if (!$hardhatActive) {
-    Write-Host "[Service 1/4] Starting Hardhat Node on :8545..." -ForegroundColor Cyan
-    Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\blockchain`" && npx.cmd hardhat node"
-    Start-Sleep -Seconds 4
-}
+Write-Host "[Service 1/4] Starting Hardhat Node on :8545..." -ForegroundColor Cyan
+Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\blockchain`" && npx.cmd hardhat node"
+Start-Sleep -Seconds 5
+
 Write-Host "[INFO] Deploying Smart Contracts..." -ForegroundColor Cyan
 Push-Location "blockchain"
 & npx.cmd hardhat run scripts/deploy.js --network localhost
 Pop-Location
 
 # 6. Launch Backend API
-if (!$backendActive) {
-    Write-Host "[Service 2/4] Starting Backend API on :3001..." -ForegroundColor Cyan
-    Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\apps\backend`" && npm.cmd run dev"
-    Start-Sleep -Seconds 2
-} else {
-    Write-Host "[Service 2/4] Backend API is already running on port 3001." -ForegroundColor Green
-}
+Write-Host "[Service 2/4] Starting Backend API on :3001..." -ForegroundColor Cyan
+Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\apps\backend`" && npm.cmd run dev"
+Start-Sleep -Seconds 2
 
 # 7. Launch Web Frontend
-if (!$webActive) {
-    Write-Host "[Service 3/4] Starting Web Frontend on :5173..." -ForegroundColor Cyan
-    Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\apps\web`" && npm.cmd run dev"
-    Start-Sleep -Seconds 2
-} else {
-    Write-Host "[Service 3/4] Web Frontend is already running on port 5173." -ForegroundColor Green
-}
+Write-Host "[Service 3/4] Starting Web Frontend on :5173..." -ForegroundColor Cyan
+Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\apps\web`" && npm.cmd run dev"
+Start-Sleep -Seconds 2
 
 # 8. Launch AI ML Service
-if ($pythonAvailable -and !$aiActive) {
+if ($pythonAvailable) {
     Write-Host "[Service 4/4] Starting AI ML Service on :8000..." -ForegroundColor Cyan
     Start-Process cmd.exe -ArgumentList '/k', "cd /d `"$RootPath\apps\ml-inference`" && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-} elseif ($aiActive) {
-    Write-Host "[Service 4/4] AI Service is already running on port 8000." -ForegroundColor Green
 }
 
 Write-Host ""
