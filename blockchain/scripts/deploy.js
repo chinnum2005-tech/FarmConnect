@@ -89,13 +89,20 @@ async function runDeployment(hreInstance = hre) {
     adminAddress = process.env.LOCAL_ADMIN_ADDRESS || deployer.address;
     relayerAddress = process.env.LOCAL_RELAYER_ADDRESS || deployer.address;
   } else {
-    adminAddress = process.env.AMOY_ADMIN_ADDRESS || deployer.address;
-    relayerAddress = process.env.AMOY_RELAYER_ADDRESS;
+    adminAddress = (process.env.AMOY_ADMIN_ADDRESS || "").trim();
+    relayerAddress = (process.env.AMOY_RELAYER_ADDRESS || "").trim();
 
     if (!relayerAddress) {
       throw new Error(
         `[Deploy Error] AMOY_RELAYER_ADDRESS is required for public network deployment. ` +
         `Using the deployment account as the operational relayer on public testnets is prohibited without explicit configuration.`
+      );
+    }
+
+    if (!adminAddress) {
+      throw new Error(
+        `[Deploy Error] AMOY_ADMIN_ADDRESS is required for public network deployment. ` +
+        `Administrative handover requires an explicit administrator target.`
       );
     }
   }
@@ -134,6 +141,9 @@ async function runDeployment(hreInstance = hre) {
     }
     if (deployer.address.toLowerCase() === relayerAddress.toLowerCase()) {
       throw new Error(`[Deploy Error] Role conflict: Deployer account cannot be designated as the operational relayer on public networks.`);
+    }
+    if (deployer.address.toLowerCase() === adminAddress.toLowerCase()) {
+      throw new Error(`[Deploy Error] Role conflict: Deployer account cannot be designated as the permanent admin on public networks. Handover requires a distinct admin target.`);
     }
   }
 

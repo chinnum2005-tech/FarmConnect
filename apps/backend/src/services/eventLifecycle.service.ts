@@ -97,32 +97,57 @@ export class EventLifecycleService {
       }
 
       if (existing.chainStatus === 'SUBMITTED' && existing.transactionHash) {
-        // In-flight transaction: query receipt to check if already mined
+        // In-flight transaction: query receipt and confirmations
         try {
-          const receipt = await blockchainService.getTransactionReceipt(
-            existing.transactionHash
-          );
-          if (receipt && receipt.status === 1) {
-            const confirmed = await prismaClient.supplyChainEvent.update({
-              where: { id: existing.id },
-              data: {
-                chainStatus: 'CONFIRMED',
-                blockNumber: receipt.blockNumber,
-                confirmations: 1,
+          const { receipt, confirmations, requiredConfirmations } =
+            await blockchainService.getReceiptAndConfirmations(existing.transactionHash);
+
+          if (receipt) {
+            if (receipt.status === 0) {
+              const failed = await prismaClient.supplyChainEvent.update({
+                where: { id: existing.id },
+                data: {
+                  chainStatus: 'FAILED',
+                  blockNumber: receipt.blockNumber,
+                  confirmations: 0,
+                  verified: false,
+                },
+              });
+              return {
+                eventId: failed.id,
+                status: 'FAILED',
+                transactionHash: failed.transactionHash,
+                blockNumber: failed.blockNumber,
+                confirmations: 0,
+                evidenceHash,
+                batchIdBytes32,
+                isReplay: true,
+                verified: false,
+              };
+            }
+
+            if (receipt.status === 1 && confirmations >= requiredConfirmations) {
+              const confirmed = await prismaClient.supplyChainEvent.update({
+                where: { id: existing.id },
+                data: {
+                  chainStatus: 'CONFIRMED',
+                  blockNumber: receipt.blockNumber,
+                  confirmations,
+                  verified: true,
+                },
+              });
+              return {
+                eventId: confirmed.id,
+                status: 'CONFIRMED',
+                transactionHash: confirmed.transactionHash,
+                blockNumber: confirmed.blockNumber,
+                confirmations,
+                evidenceHash,
+                batchIdBytes32,
+                isReplay: true,
                 verified: true,
-              },
-            });
-            return {
-              eventId: confirmed.id,
-              status: 'CONFIRMED',
-              transactionHash: confirmed.transactionHash,
-              blockNumber: confirmed.blockNumber,
-              confirmations: 1,
-              evidenceHash,
-              batchIdBytes32,
-              isReplay: true,
-              verified: true,
-            };
+              };
+            }
           }
         } catch (e) {
           // If RPC check fails, return existing SUBMITTED state
@@ -147,6 +172,15 @@ export class EventLifecycleService {
     let eventRecord: any;
     if (existing && existing.chainStatus === 'RECORDED_DB') {
       eventRecord = existing;
+    } else if (existing && existing.chainStatus === 'FAILED' && !existing.transactionHash) {
+      // Re-attempt unbroadcast failed event
+      eventRecord = await prismaClient.supplyChainEvent.update({
+        where: { id: existing.id },
+        data: {
+          chainStatus: 'RECORDED_DB',
+          timestamp: new Date(),
+        },
+      });
     } else {
       eventRecord = await prismaClient.supplyChainEvent.create({
         data: {
@@ -264,6 +298,7 @@ export class EventLifecycleService {
 
   /**
    * Reconciles an in-flight or submitted transaction against the blockchain receipt.
+   * Handles pending, mined, reverted, and unavailable RPC states safely without crashing.
    */
   async reconcileEvent(
     eventId: string,
@@ -291,49 +326,152 @@ export class EventLifecycleService {
       };
     }
 
-    const receipt = await blockchainService.getTransactionReceipt(
-      event.transactionHash
-    );
+    try {
+      const { receipt, confirmations, requiredConfirmations } =
+        await blockchainService.getReceiptAndConfirmations(event.transactionHash);
 
-    if (!receipt) {
-      // Transaction still in mempool or pending mining
+      if (!receipt) {
+        // Transaction still in mempool or pending mining
+        return {
+          eventId: event.id,
+          status: (event.chainStatus as TransactionLifecycleStatus) || 'SUBMITTED',
+          transactionHash: event.transactionHash,
+          blockNumber: null,
+          confirmations: 0,
+          evidenceHash: event.evidenceHash || '',
+          batchIdBytes32: event.batchIdBytes32 || '',
+          isReplay: false,
+          verified: false,
+        };
+      }
+
+      // If transaction reverted on-chain
+      if (receipt.status === 0) {
+        const failedRecord = await prismaClient.supplyChainEvent.update({
+          where: { id: event.id },
+          data: {
+            chainStatus: 'FAILED',
+            blockNumber: receipt.blockNumber,
+            confirmations: 0,
+            verified: false,
+          },
+        });
+        return {
+          eventId: failedRecord.id,
+          status: 'FAILED',
+          transactionHash: failedRecord.transactionHash,
+          blockNumber: failedRecord.blockNumber,
+          confirmations: 0,
+          evidenceHash: failedRecord.evidenceHash || '',
+          batchIdBytes32: failedRecord.batchIdBytes32 || '',
+          isReplay: false,
+          verified: false,
+        };
+      }
+
+      // Transaction mined, but verify required confirmation depth
+      if (confirmations < requiredConfirmations) {
+        return {
+          eventId: event.id,
+          status: 'SUBMITTED',
+          transactionHash: event.transactionHash,
+          blockNumber: receipt.blockNumber,
+          confirmations,
+          evidenceHash: event.evidenceHash || '',
+          batchIdBytes32: event.batchIdBytes32 || '',
+          isReplay: false,
+          verified: false,
+        };
+      }
+
+      // Transaction mined and satisfied required confirmations
+      const confirmedRecord = await prismaClient.supplyChainEvent.update({
+        where: { id: event.id },
+        data: {
+          chainStatus: 'CONFIRMED',
+          blockNumber: receipt.blockNumber,
+          confirmations,
+          verified: true,
+        },
+      });
+
+      return {
+        eventId: confirmedRecord.id,
+        status: 'CONFIRMED',
+        transactionHash: confirmedRecord.transactionHash,
+        blockNumber: confirmedRecord.blockNumber,
+        confirmations,
+        evidenceHash: confirmedRecord.evidenceHash || '',
+        batchIdBytes32: confirmedRecord.batchIdBytes32 || '',
+        isReplay: false,
+        verified: true,
+      };
+    } catch (rpcErr: any) {
+      // If RPC is unavailable or query fails, return current status without corrupting DB state
       return {
         eventId: event.id,
         status: (event.chainStatus as TransactionLifecycleStatus) || 'SUBMITTED',
         transactionHash: event.transactionHash,
-        blockNumber: null,
-        confirmations: 0,
+        blockNumber: event.blockNumber || null,
+        confirmations: event.confirmations || 0,
         evidenceHash: event.evidenceHash || '',
         batchIdBytes32: event.batchIdBytes32 || '',
         isReplay: false,
-        verified: false,
+        verified: event.chainStatus === 'CONFIRMED',
       };
     }
+  }
 
-    const newStatus: TransactionLifecycleStatus =
-      receipt.status === 1 ? 'CONFIRMED' : 'FAILED';
-
-    const updated = await prismaClient.supplyChainEvent.update({
-      where: { id: event.id },
-      data: {
-        chainStatus: newStatus,
-        blockNumber: receipt.blockNumber,
-        confirmations: 1,
-        verified: newStatus === 'CONFIRMED',
+  /**
+   * Reconciles all pending or submitted transactions across the database.
+   * Typically executed on backend restart or periodic recovery sweep.
+   */
+  async reconcileAllPendingEvents(prismaClient: any = prisma): Promise<{
+    processed: number;
+    confirmed: number;
+    failed: number;
+    stillPending: number;
+    unavailable: number;
+  }> {
+    const pendingEvents = await prismaClient.supplyChainEvent.findMany({
+      where: {
+        chainStatus: 'SUBMITTED',
+        transactionHash: { not: null },
       },
     });
 
-    return {
-      eventId: updated.id,
-      status: newStatus,
-      transactionHash: updated.transactionHash,
-      blockNumber: updated.blockNumber,
-      confirmations: 1,
-      evidenceHash: updated.evidenceHash || '',
-      batchIdBytes32: updated.batchIdBytes32 || '',
-      isReplay: false,
-      verified: newStatus === 'CONFIRMED',
+    const summary = {
+      processed: pendingEvents.length,
+      confirmed: 0,
+      failed: 0,
+      stillPending: 0,
+      unavailable: 0,
     };
+
+    for (const event of pendingEvents) {
+      try {
+        const result = await this.reconcileEvent(event.id, prismaClient);
+        if (!result) continue;
+        if (result.status === 'CONFIRMED') {
+          summary.confirmed++;
+        } else if (result.status === 'FAILED') {
+          summary.failed++;
+        } else if (result.status === 'SUBMITTED') {
+          summary.stillPending++;
+        }
+      } catch (err) {
+        summary.unavailable++;
+      }
+    }
+
+    if (summary.processed > 0) {
+      console.log(
+        `[EventLifecycleService] Reconciled ${summary.processed} pending transactions: ` +
+        `${summary.confirmed} confirmed, ${summary.failed} failed, ${summary.stillPending} still pending, ${summary.unavailable} unavailable.`
+      );
+    }
+
+    return summary;
   }
 }
 

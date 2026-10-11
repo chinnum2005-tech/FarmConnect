@@ -226,6 +226,25 @@ describe('Directive 023: PredictionProvenance Amoy Deployment Safety Gate & Isol
     expect(deployMock).not.toHaveBeenCalled();
   });
 
+  it('7b. When DEPLOY_CONFIRM=false, halts and prevents any broadcast transaction for Provenance', async () => {
+    const deployMock = jest.fn();
+    const mockHre = createMockHre({
+      chainId: 80002,
+      networkName: 'amoy',
+      signers: [{ address: VALID_AMOY_DEPLOYER }],
+      deployFn: deployMock,
+    });
+
+    process.env.AMOY_ADMIN_ADDRESS = VALID_AMOY_ADMIN;
+    process.env.AMOY_RELAYER_ADDRESS = VALID_AMOY_RELAYER;
+    process.env.DEPLOY_CONFIRM = 'false';
+
+    const result = await runProvenanceDeployment(mockHre);
+
+    expect(result.status).toBe('DRY_RUN_HALTED');
+    expect(deployMock).not.toHaveBeenCalled();
+  });
+
   // 8. Provenance service checks WRITER_ROLE matching deployment script role
   it('8. Provenance service checks WRITER_ROLE matching the role assigned by deployment script', async () => {
     const expectedHash = ethers.id('WRITER_ROLE');

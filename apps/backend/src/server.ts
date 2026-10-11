@@ -31,6 +31,7 @@ import adminRoutes from './routes/admin.routes';
 import marketRoutes from './routes/market.routes';
 import { startProvenanceListener } from './services/provenanceListener';
 import { startPriceSnapshotJob } from './jobs/priceSnapshot.job';
+import { eventLifecycleService } from './services/eventLifecycle.service';
 
 // Error handling middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -199,6 +200,11 @@ app.listen(PORT, () => {
   // Start blockchain event listener
   startProvenanceListener();
   
+  // Reconcile pending in-flight blockchain transactions after restart
+  eventLifecycleService.reconcileAllPendingEvents().catch((err) => {
+    console.error('⚠️ [EventLifecycleService] Startup reconciliation error:', err?.message || err);
+  });
+
   // Start daily market price snapshot job
   startPriceSnapshotJob();
 });

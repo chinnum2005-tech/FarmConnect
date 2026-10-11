@@ -252,17 +252,8 @@ export const verifyOnChainProduce = async (req: any, res: Response) => {
       });
     }
 
-    // 2. Determine target batch ID and canonical produce evidence
+    // 2. Determine target batch ID
     const batchId = product ? product.id : crop.id;
-    const evidencePayload = {
-      batchId,
-      cropName: crop ? crop.name : product.name,
-      cropType: crop ? crop.type : 'PRODUCE',
-      farmName: crop?.farm?.name || 'AgroTrace Partner Farm',
-      plantingDate: crop?.plantingDate || new Date().toISOString(),
-      variety: crop?.variety || null,
-      status: product?.status || crop?.growthStage || 'ACTIVE',
-    };
 
     // 3. Find any latest or pending blockchain event record
     const latestEvent = await prisma.supplyChainEvent.findFirst({
@@ -275,10 +266,85 @@ export const verifyOnChainProduce = async (req: any, res: Response) => {
       orderBy: { timestamp: 'desc' },
     });
 
-    const eventType = latestEvent ? toRegistryEventType(latestEvent.eventType) : RegistryEventType.PLANTED;
-    const pendingTxHash = latestEvent?.chainStatus === 'PENDING' ? (latestEvent.transactionHash || undefined) : undefined;
+    // 4. Resolve authoritative evidence payload from system of record:
+    // If a produce/crop record exists in the database, the authoritative registered batch data
+    // is what was recorded at registration (latestEvent.metadata or canonical DB attributes).
+    let authoritativeEvidence: any;
+    if (latestEvent?.metadata) {
+      try {
+        authoritativeEvidence = typeof latestEvent.metadata === 'string'
+          ? JSON.parse(latestEvent.metadata)
+          : latestEvent.metadata;
+      } catch {
+        authoritativeEvidence = { metadata: latestEvent.metadata };
+      }
+    } else {
+      authoritativeEvidence = {
+        batchId,
+        cropName: crop ? crop.name : product.name,
+        cropType: crop ? crop.type : 'PRODUCE',
+        farmName: crop?.farm?.name || 'AgroTrace Partner Farm',
+        plantingDate: crop?.plantingDate || new Date().toISOString(),
+        variety: crop?.variety || null,
+        status: product?.status || crop?.growthStage || 'ACTIVE',
+      };
+    }
 
-    // 4. Perform truthful on-chain verification
+    // Resolve client-supplied evidence if explicitly provided
+    let clientSuppliedEvidence: any = null;
+    if (req.body?.evidence) {
+      clientSuppliedEvidence = req.body.evidence;
+    } else if (req.query?.evidence) {
+      try {
+        clientSuppliedEvidence = typeof req.query.evidence === 'string'
+          ? JSON.parse(req.query.evidence)
+          : req.query.evidence;
+      } catch (e) {
+        clientSuppliedEvidence = { raw: req.query.evidence };
+      }
+    }
+
+    // Security check: Client-supplied evidence must NEVER override authoritative registered data.
+    // If client supplied custom evidence, verify that it does not contradict the authoritative stored record.
+    let evidencePayload = authoritativeEvidence;
+    if (clientSuppliedEvidence) {
+      const authHash = hashEvidence(authoritativeEvidence);
+      const clientHash = hashEvidence(clientSuppliedEvidence);
+      if (authHash !== clientHash) {
+        // Manipulated or altered client payload detected: client evidence diverges from stored record
+        return res.json({
+          success: true,
+          data: {
+            status: 'MISMATCH',
+            batchId,
+            batchIdBytes32: toBatchIdBytes32(batchId),
+            onChainBatchExists: true,
+            computedEvidenceHash: clientHash,
+            onChainEvidenceHash: authHash,
+            match: false,
+            details: 'Evidence hash mismatch: client-supplied evidence contradicts authoritative registered batch data.',
+            produceDetails: {
+              id: batchId,
+              name: crop ? crop.name : product.name,
+              farm: crop?.farm?.name,
+            },
+          },
+        });
+      }
+      evidencePayload = authoritativeEvidence;
+    }
+
+    const eventType = req.query?.eventType !== undefined
+      ? toRegistryEventType(req.query.eventType as string)
+      : (req.body?.eventType !== undefined
+        ? toRegistryEventType(req.body.eventType)
+        : (latestEvent ? toRegistryEventType(latestEvent.eventType) : RegistryEventType.PLANTED));
+
+    const pendingTxHash = (latestEvent?.chainStatus === 'PENDING' || latestEvent?.chainStatus === 'SUBMITTED')
+      ? (latestEvent.transactionHash || undefined)
+      : undefined;
+
+    // 5. Perform truthful on-chain verification
     const verification = await blockchainService.verifyOnChain(
       batchId,
       eventType,

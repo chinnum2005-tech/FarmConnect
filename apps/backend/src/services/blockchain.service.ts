@@ -548,6 +548,36 @@ export class BlockchainService {
   }
 
   /**
+   * Queries transaction receipt and computes current confirmation depth against network requirements.
+   */
+  async getReceiptAndConfirmations(txHash: string): Promise<{
+    receipt: ethers.TransactionReceipt | null;
+    confirmations: number;
+    requiredConfirmations: number;
+  }> {
+    const config = this.getConfig();
+    const requiredConfirmations = config.mode === 'amoy' ? 3 : 1;
+    const receipt = await this.getTransactionReceipt(txHash);
+
+    if (!receipt) {
+      return { receipt: null, confirmations: 0, requiredConfirmations };
+    }
+
+    let confirmations = 1;
+    try {
+      const { provider } = await this.getReadOnlyContract();
+      const currentBlock = await provider.getBlockNumber();
+      confirmations = currentBlock >= receipt.blockNumber
+        ? (currentBlock - receipt.blockNumber + 1)
+        : 1;
+    } catch {
+      confirmations = 1;
+    }
+
+    return { receipt, confirmations, requiredConfirmations };
+  }
+
+  /**
    * Backward-compatible helper used by existing controllers (supplyChain, payment, shipment).
    * Generates deterministic hash from metadata and registers batch or records event.
    * NEVER generates simulated or fabricated hashes.

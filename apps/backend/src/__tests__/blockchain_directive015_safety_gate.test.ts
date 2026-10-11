@@ -245,6 +245,23 @@ describe('Directive 015: Final Deployment-Script Safety Gate & Dry-Run Verificat
     );
   });
 
+  it('10b. Requires explicit AMOY_ADMIN_ADDRESS on public networks and refuses silent defaulting', async () => {
+    const safeDeployer = '0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+    const safeRelayer = '0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC';
+    const mockHre = createMockHre({
+      chainId: 80002,
+      networkName: 'amoy',
+      signers: [{ address: safeDeployer }],
+    });
+
+    process.env.AMOY_RELAYER_ADDRESS = safeRelayer;
+    delete process.env.AMOY_ADMIN_ADDRESS;
+
+    await expect(runDeployment(mockHre)).rejects.toThrow(
+      /AMOY_ADMIN_ADDRESS is required for public network deployment/
+    );
+  });
+
   // -------------------------------------------------------------------------
   // 8. Fail-Safe Authorization Gate & Dry-Run Verification
   // -------------------------------------------------------------------------

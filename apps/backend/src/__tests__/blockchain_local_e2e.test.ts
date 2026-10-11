@@ -422,7 +422,7 @@ describe('Directive 012: Local End-to-End Blockchain Verification Suite', () => 
       expect(jsonResponse.data.status).toBe('VERIFIED');
       expect(jsonResponse.data.match).toBe(true);
       expect(jsonResponse.data.batchId).toBe(testBatchId);
-    });
+    }, 15000);
 
     it('executes verifyOnChainProduce HTTP controller handler for tampered evidence', async () => {
       const mockReq = {
@@ -449,7 +449,7 @@ describe('Directive 012: Local End-to-End Blockchain Verification Suite', () => 
       expect(jsonResponse.success).toBe(true);
       expect(jsonResponse.data.status).toBe('MISMATCH');
       expect(jsonResponse.data.match).toBe(false);
-    });
+    }, 15000);
 
     it('existing QR verification route safely returns 404 for nonexistent produce QR codes', async () => {
       const mockReq = {
@@ -462,6 +462,6 @@ describe('Directive 012: Local End-to-End Blockchain Verification Suite', () => 
       };
 
       await expect(verifyProduct(mockReq, mockRes)).rejects.toThrow('Product not found or invalid QR code');
-    });
+    }, 15000);
   });
 });

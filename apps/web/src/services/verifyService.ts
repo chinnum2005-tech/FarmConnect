@@ -6,10 +6,18 @@ import api from './api';
  */
 export const verifyService = {
   /**
-   * Verify product using QR code
+   * Verify product using QR code (Database traceability record)
    */
   verifyProduct: async (qrCode: string) => {
     const response = await api.get(`/api/verify/${qrCode}`);
+    return response.data;
+  },
+
+  /**
+   * Independent on-chain cryptographic verification
+   */
+  verifyOnChain: async (identifier: string, params?: { eventType?: string; evidence?: any }) => {
+    const response = await api.get(`/api/verify/on-chain/${identifier}`, { params });
     return response.data;
   },
 
