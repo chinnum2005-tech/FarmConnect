@@ -124,16 +124,20 @@ export default function DistributorDashboard() {
     }
     setUpdating(true);
     try {
-      await shipmentService.updateShipmentStatus(
+      const updateRes = await shipmentService.updateShipmentStatus(
         selectedShipmentId,
         selectedStatus as any,
         currentLocation || 'Unknown Location'
       );
       
-      alert('Event successfully recorded on blockchain!');
-      
-      // The backend handles blockchain hashing for shipments implicitly, but we can simulate a hash return
-      setLastTxHash('0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''));
+      const genuineTxHash = updateRes?.data?.transactionHash || null;
+      if (genuineTxHash) {
+        setLastTxHash(genuineTxHash);
+        alert('Event status updated and anchored on-chain!');
+      } else {
+        setLastTxHash('');
+        alert('Event status updated in database successfully.');
+      }
       
       loadData();
       setSelectedShipmentId('');

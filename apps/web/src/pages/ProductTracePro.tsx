@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, CheckCircle, MapPin, Calendar, User, Truck, Package, Sprout, 
   ShoppingCart, Shield, Award, Clock, TrendingUp, BarChart3, QrCode,
-  Leaf, Thermometer, Droplets, Activity, ExternalLink, Play, AlertTriangle,
+  Leaf, Thermometer, Droplets, Activity, ExternalLink, Play, AlertTriangle, AlertCircle, RefreshCw,
   Store, MessageCircle, Camera, LogOut
 } from 'lucide-react';
 import MacDock, { DockItem } from '../components/ui/MacDock';
@@ -156,11 +156,18 @@ export default function ProductTracePro() {
           estimatedYield: crop.estimatedYield,
         });
       } else {
-        throw new Error('No product found for this ID.');
+        throw new Error('Batch Not Found (404): No produce or crop record exists for this identifier.');
       }
     } catch (err: any) {
       console.error('Failed to load traceability:', err);
-      setError(err.message || 'Failed to load product traceability data. Please verify database connection.');
+      const status = err.response?.status;
+      if (status === 404 || err.message?.includes('404') || err.message?.includes('No product found')) {
+        setError('Batch Not Found (404): The requested crop or product batch could not be found in the registry.');
+      } else if (err.code === 'ERR_NETWORK' || !err.response) {
+        setError('Connection Error: Unable to reach AgroTrace backend services. Please verify network availability.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Failed to load product traceability data.');
+      }
     } finally {
       setLoading(false);
     }
@@ -328,23 +335,70 @@ export default function ProductTracePro() {
     );
   }
 
+  const getProvenanceBadge = () => {
+    if (error || !productInfo.name) {
+      if (error?.includes('404') || error?.toLowerCase().includes('not found')) {
+        return {
+          label: 'Batch Not Found (404)',
+          className: 'bg-red-50 text-red-700 border-red-200',
+          icon: AlertCircle,
+        };
+      }
+      return {
+        label: 'Verification Unavailable',
+        className: 'bg-amber-50 text-amber-700 border-amber-200',
+        icon: AlertTriangle,
+      };
+    }
+    const hasConfirmedOnChain = events.some(e => e.verified && e.transactionHash);
+    const hasInFlight = events.some(e => e.chainStatus === 'SUBMITTED' || e.chainStatus === 'PENDING');
+    if (hasConfirmedOnChain) {
+      return {
+        label: 'Blockchain Verified',
+        className: 'bg-green-100 text-green-700 border-green-200',
+        icon: Shield,
+      };
+    }
+    if (hasInFlight) {
+      return {
+        label: 'Pending On-Chain Anchoring',
+        className: 'bg-blue-100 text-blue-700 border-blue-200',
+        icon: RefreshCw,
+      };
+    }
+    if (events.length > 0) {
+      return {
+        label: 'Recorded in Database (DB Only)',
+        className: 'bg-slate-100 text-slate-700 border-slate-200',
+        icon: CheckCircle,
+      };
+    }
+    return {
+      label: 'No Events Recorded',
+      className: 'bg-gray-100 text-gray-700 border-gray-200',
+      icon: AlertCircle,
+    };
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 ${isAuthenticated ? 'pb-32' : ''}`}>
-      {/* Error Banner */}
+      {/* Honest Error / Status Banner */}
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-amber-50 border-b border-amber-200 py-3 px-4"
+          className="bg-amber-50 border-b border-amber-200 py-3.5 px-4"
         >
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 rounded-full">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <div className="p-2 bg-amber-100 rounded-xl">
+                <AlertCircle className="w-5 h-5 text-amber-700" />
               </div>
               <div>
-                <p className="text-amber-800 font-semibold text-sm">Demo Mode Active</p>
-                <p className="text-amber-700 text-xs">{error}</p>
+                <p className="text-amber-900 font-semibold text-sm">
+                  {error.includes('404') ? 'Traceability Notice' : 'Connection Alert'}
+                </p>
+                <p className="text-amber-700 text-xs mt-0.5">{error}</p>
               </div>
             </div>
             <button
@@ -353,9 +407,9 @@ export default function ProductTracePro() {
                 setRetryCount(prev => prev + 1);
                 if (productId) loadTraceability(productId);
               }}
-              className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold transition-colors flex-shrink-0"
             >
-              Retry Connection
+              Retry Query
             </button>
           </div>
         </motion.div>
@@ -373,17 +427,56 @@ export default function ProductTracePro() {
               <span className="font-medium">Back</span>
             </button>
             
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full">
-                <Shield className="w-5 h-5" />
-                <span className="font-semibold text-sm">Blockchain Verified</span>
-              </div>
-              <QrCode className="w-6 h-6 text-gray-600" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              {(() => {
+                const badge = getProvenanceBadge();
+                const Icon = badge.icon;
+                return (
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs sm:text-sm font-semibold shadow-sm ${badge.className}`}>
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span>{badge.label}</span>
+                  </div>
+                );
+              })()}
+              <QrCode className="w-5 h-5 text-gray-500 hidden sm:block" />
             </div>
           </div>
         </div>
       </div>
 
+      {error && !productInfo.name ? (
+        <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-100"
+          >
+            <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+              Batch Traceability Record Not Found
+            </h2>
+            <p className="text-gray-600 max-w-lg mx-auto mb-6 text-sm sm:text-base">
+              {error}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-full sm:w-auto px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition text-sm"
+              >
+                Go Back
+              </button>
+              <button
+                onClick={() => navigate('/marketplace')}
+                className="w-full sm:w-auto px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition text-sm"
+              >
+                Browse Marketplace
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      ) : (
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Product Header Card */}
         <motion.div
@@ -810,6 +903,7 @@ export default function ProductTracePro() {
           </motion.div>
         )}
       </div>
+      )}
 
       {/* Add Event Modal */}
       <AnimatePresence>

@@ -3,6 +3,7 @@ import prisma from '../database/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { blockchainService } from '../services/blockchain.service';
+import { eventLifecycleService } from '../services/eventLifecycle.service';
 
 /**
  * Get all shipments assigned to distributor
@@ -210,7 +211,7 @@ export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
     }
 
     if (status === 'DELIVERED') {
-      // Record supply chain event
+      // Record supply chain event via eventLifecycleService
       const order = await prisma.order.findUnique({
         where: { id: shipment.orderId },
         include: { items: true },
@@ -223,38 +224,19 @@ export const updateShipmentStatus = async (req: AuthRequest, res: Response) => {
             deliveredAt: new Date().toISOString(),
           };
 
-          const scEvent = await prisma.supplyChainEvent.create({
-            data: {
-              productId: item.productId,
-              eventType: 'RECEIVED',
-              timestamp: new Date(),
-              actorId: req.user!.id,
-              location: currentLocation || order.shippingAddress,
-              metadata: JSON.stringify(metadata),
-              chainStatus: 'RECORDED_DB',
-              transactionHash: null,
-            },
-          });
-
-          // Fire off blockchain transaction asynchronously
-          blockchainService.recordEvent(
-            item.productId, 
-            'RECEIVED', 
-            metadata
-          ).then(async (result) => {
-            await prisma.supplyChainEvent.update({
-              where: { id: scEvent.id },
-              data: {
-                transactionHash: result.txHash,
-                chainStatus: result.simulated ? 'SIMULATED_FALLBACK' : 'CONFIRMED'
-              }
-            });
-          }).catch(err => {
-            console.error('Failed to anchor RECEIVED event to blockchain', err);
-            prisma.supplyChainEvent.update({
-              where: { id: scEvent.id },
-              data: { chainStatus: 'FAILED' }
-            }).catch(console.error);
+          // Route delivery event through eventLifecycleService asynchronously
+          eventLifecycleService.recordAndPersistEvent({
+            batchId: item.productId,
+            productId: item.productId,
+            eventType: 'RECEIVED',
+            evidence: metadata,
+            actorId: req.user!.id,
+            location: currentLocation || order.shippingAddress,
+            idempotencyKey: `idem-shipment-${shipment.id}-${item.productId}-DELIVERED`,
+          }).catch((err) => {
+            // If blockchain submission is unavailable, eventLifecycleService preserves
+            // the database event record without inventing a transaction hash or confirmation.
+            console.warn(`[Shipment] Blockchain anchoring unavailable for delivered product ${item.productId}:`, err);
           });
         }
       }

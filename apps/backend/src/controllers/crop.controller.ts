@@ -105,6 +105,9 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
     }
 
     // Area is now expected to be in Hectares natively
+    if (area === undefined || area === null || Number(area) <= 0) {
+      throw new AppError('Crop area must be greater than 0', 400);
+    }
 
     // Get farmer's farm
     const farm = await prisma.farm.findUnique({ 
@@ -151,13 +154,13 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
 
     const { estimatedYield } = req.body;
 
-    const crop = await prisma.crop.create({
+    const createdCrop = await prisma.crop.create({
       data: {
         name,
         type,
         variety,
-        plantingDate,
-        expectedHarvest,
+        plantingDate: new Date(plantingDate),
+        expectedHarvest: expectedHarvest ? new Date(expectedHarvest) : undefined,
         area: Number(area),
         farmId: farm.id,
         fieldId: field.id,
@@ -165,14 +168,21 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
       },
     });
 
+    // Persist canonical QR identifier against the newly created crop
+    const crop = await prisma.crop.update({
+      where: { id: createdCrop.id },
+      data: { qrCode: `FARMCONNECT-${createdCrop.id}` },
+    });
+
     res.status(201).json({ 
       success: true, 
       data: crop,
       message: 'Crop created successfully'
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Error in createCrop:', error?.message || error);
     if (error instanceof AppError) throw error;
-    throw new AppError('Failed to create crop', 500);
+    throw new AppError(error?.message || 'Failed to create crop', 500);
   }
 };
 
@@ -321,11 +331,18 @@ export const updateCrop = async (req: AuthRequest, res: Response) => {
       throw new AppError(`Unrealistic harvest date: ${currentType} requires a minimum growing period of ${minDays} days.`, 400);
     }
 
-    // Area is now expected to be in Hectares natively
+    // Ensure Date types for DateTime schema fields
+    const dataToUpdate = { ...updateData };
+    if (dataToUpdate.plantingDate) {
+      dataToUpdate.plantingDate = new Date(dataToUpdate.plantingDate);
+    }
+    if (dataToUpdate.expectedHarvest) {
+      dataToUpdate.expectedHarvest = new Date(dataToUpdate.expectedHarvest);
+    }
 
     const updatedCrop = await prisma.crop.update({
       where: { id },
-      data: updateData,
+      data: dataToUpdate,
     });
 
     res.json({ 
@@ -333,8 +350,9 @@ export const updateCrop = async (req: AuthRequest, res: Response) => {
       data: updatedCrop,
       message: `Crop updated successfully`
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Error in updateCrop:', error?.message || error);
     if (error instanceof AppError) throw error;
-    throw new AppError('Failed to update crop details', 500);
+    throw new AppError(error?.message || 'Failed to update crop details', 500);
   }
 };

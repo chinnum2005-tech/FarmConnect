@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import prisma from '../database/prisma';
 import { blockchainService } from '../services/blockchain.service';
+import { eventLifecycleService } from '../services/eventLifecycle.service';
 
 let stripe: Stripe | undefined;
 if (process.env.STRIPE_SECRET_KEY) {
@@ -202,7 +203,7 @@ async function processSuccessfulPayment(orderId: string, session: Stripe.Checkou
     }
   }
 
-  // Record supply chain events to blockchain asynchronously (non-blocking)
+  // Record supply chain events via eventLifecycleService asynchronously (non-blocking)
   setImmediate(() => {
     (async () => {
       for (const item of order.items) {
@@ -213,31 +214,19 @@ async function processSuccessfulPayment(orderId: string, session: Stripe.Checkou
             amount: item.price * item.quantity,
           };
 
-          const scEvent = await prisma.supplyChainEvent.create({
-            data: {
-              productId: item.productId,
-              eventType: 'SOLD',
-              timestamp: new Date(),
-              actorId: userId,
-              location: order.shippingAddress,
-              metadata: JSON.stringify(metadata),
-              chainStatus: 'RECORDED_DB',
-              transactionHash: null,
-            },
+          await eventLifecycleService.recordAndPersistEvent({
+            batchId: item.productId,
+            productId: item.productId,
+            eventType: 'SOLD',
+            evidence: metadata,
+            actorId: userId,
+            location: order.shippingAddress,
+            idempotencyKey: `idem-payment-${order.id}-${item.productId}`,
           });
-
-          // Async network request to blockchain
-          blockchainService.recordEvent(item.productId, 'SOLD', metadata).then(async (result) => {
-            await prisma.supplyChainEvent.update({
-              where: { id: scEvent.id },
-              data: {
-                transactionHash: result.txHash,
-                chainStatus: result.simulated ? 'SIMULATED_FALLBACK' : 'CONFIRMED'
-              }
-            });
-          }).catch(console.error);
-        } catch (bcError) {
-          console.error('Failed to create supply chain event record:', bcError);
+        } catch (lifecycleErr) {
+          // If blockchain submission is unavailable, eventLifecycleService preserves
+          // the database event record without inventing a transaction hash or confirmation.
+          console.warn(`[Payment] Blockchain anchoring unavailable for product ${item.productId}:`, lifecycleErr);
         }
       }
     })();

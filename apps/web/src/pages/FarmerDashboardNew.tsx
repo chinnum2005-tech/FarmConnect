@@ -179,12 +179,27 @@ export default function FarmerDashboard() {
     }
   };
 
+  const usedLandArea = crops.reduce((sum, c) => sum + (Number(c.area) || 0), 0);
+  const totalFarmSize = Number(farm?.size) || 0;
+  const availableLandArea = Math.max(0, parseFloat((totalFarmSize - usedLandArea).toFixed(2)));
+
   const handleCreateCrop = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!farm) {
       toast.error('Please complete farm onboarding first.');
       return;
     }
+
+    const requestedArea = Number(newCropForm.area);
+    if (requestedArea <= 0) {
+      toast.error('Crop area must be greater than 0 hectares.');
+      return;
+    }
+    if (requestedArea > availableLandArea) {
+      toast.error(`Insufficient farm land. Requested ${requestedArea} ha, but only ${availableLandArea} ha available (Farm size: ${totalFarmSize} ha, Used: ${usedLandArea.toFixed(2)} ha).`);
+      return;
+    }
+
     setIsSubmittingCrop(true);
     try {
       await cropService.createCrop({
@@ -193,7 +208,7 @@ export default function FarmerDashboard() {
         variety: newCropForm.variety,
         plantingDate: newCropForm.plantingDate,
         expectedHarvest: newCropForm.expectedHarvest,
-        area: Number(newCropForm.area),
+        area: requestedArea,
         farmId: farm.id,
         estimatedYield: Number(newCropForm.estimatedYield),
       });
@@ -201,13 +216,14 @@ export default function FarmerDashboard() {
       toast.success('🌱 New crop registered successfully!');
       setIsAddCropModalOpen(false);
       // Reset form
+      const nextAvailable = Math.max(0, parseFloat((availableLandArea - requestedArea).toFixed(2)));
       setNewCropForm({
         name: '',
         type: 'WHEAT',
         variety: 'Sharbati High Yield',
         plantingDate: new Date().toISOString().split('T')[0],
         expectedHarvest: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        area: 2,
+        area: nextAvailable > 0 ? Math.min(1, nextAvailable) : 0,
         estimatedYield: 3800,
       });
       loadDashboardData();
@@ -244,8 +260,15 @@ export default function FarmerDashboard() {
 
   const handleGenerateQR = async (cropId: string) => {
     try {
+      const targetCrop = crops.find(c => c.id === cropId);
       const response = await verifyService.generateQRCode(cropId);
-      setSelectedCrop(response.data);
+      const qrPayload = response?.data || response;
+      setSelectedCrop({
+        ...targetCrop,
+        ...qrPayload,
+        id: qrPayload?.id || qrPayload?.cropId || cropId,
+        name: qrPayload?.name || targetCrop?.name || 'Cultivation Batch',
+      });
       setShowQRModal(true);
     } catch (error) {
       console.error('Failed to generate QR:', error);
@@ -1030,17 +1053,77 @@ export default function FarmerDashboard() {
                   </div>
                 </div>
 
+                {/* Farm Capacity Feedback Banner */}
+                {farm && (
+                  <div className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${
+                    availableLandArea <= 0
+                      ? 'bg-amber-50 border-amber-200 text-amber-900'
+                      : Number(newCropForm.area) > availableLandArea
+                        ? 'bg-red-50 border-red-200 text-red-900'
+                        : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  }`}>
+                    <AlertTriangle className={`w-4 h-4 mt-0.5 shrink-0 ${
+                      availableLandArea <= 0 ? 'text-amber-600' : Number(newCropForm.area) > availableLandArea ? 'text-red-600' : 'text-emerald-600'
+                    }`} />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between items-center font-semibold">
+                        <span>Farm Capacity ({farm.name || 'Your Farm'}):</span>
+                        <span>{usedLandArea.toFixed(2)} / {totalFarmSize.toFixed(2)} ha used</span>
+                      </div>
+                      <div className="w-full bg-black/10 rounded-full h-1.5 overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full transition-all duration-300 ${
+                            availableLandArea <= 0 
+                              ? 'bg-amber-500' 
+                              : Number(newCropForm.area) > availableLandArea 
+                                ? 'bg-red-500' 
+                                : 'bg-emerald-600'
+                          }`}
+                          style={{ width: `${Math.min(100, totalFarmSize > 0 ? (usedLandArea / totalFarmSize) * 100 : 0)}%` }}
+                        />
+                      </div>
+                      <div className="text-[11px] leading-relaxed">
+                        {availableLandArea <= 0 ? (
+                          <span className="font-semibold text-amber-700">
+                            ⚠️ Farm capacity fully allocated ({totalFarmSize.toFixed(2)} ha total). No additional land available for new batches.
+                          </span>
+                        ) : Number(newCropForm.area) > availableLandArea ? (
+                          <span className="font-semibold text-red-700">
+                            ⚠️ Requested area ({newCropForm.area} ha) exceeds remaining capacity ({availableLandArea} ha available).
+                          </span>
+                        ) : (
+                          <span className="text-emerald-800">
+                            Available for registration: <strong>{availableLandArea} ha</strong> remaining of {totalFarmSize} ha.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Area (Hectares)</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Area (Hectares)
+                      {availableLandArea > 0 && (
+                        <span className="text-gray-400 font-normal ml-1">
+                          (max {availableLandArea} ha)
+                        </span>
+                      )}
+                    </label>
                     <input
                       type="number"
-                      step="0.1"
+                      step="0.01"
                       required
-                      min="0.1"
+                      min="0.01"
+                      max={availableLandArea > 0 ? availableLandArea : undefined}
                       value={newCropForm.area}
-                      onChange={(e) => setNewCropForm({ ...newCropForm, area: parseFloat(e.target.value) || 1 })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      onChange={(e) => setNewCropForm({ ...newCropForm, area: parseFloat(e.target.value) || 0 })}
+                      className={`w-full px-3.5 py-2.5 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 ${
+                        Number(newCropForm.area) > availableLandArea
+                          ? 'border-red-400 focus:ring-red-400'
+                          : 'border-gray-200 focus:ring-green-500'
+                      }`}
                     />
                   </div>
 
@@ -1067,8 +1150,13 @@ export default function FarmerDashboard() {
                   </button>
                   <button
                     type="submit"
-                    disabled={isSubmittingCrop}
-                    className="flex-1 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 disabled:opacity-50"
+                    disabled={
+                      isSubmittingCrop ||
+                      availableLandArea <= 0 ||
+                      Number(newCropForm.area) <= 0 ||
+                      Number(newCropForm.area) > availableLandArea
+                    }
+                    className="flex-1 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmittingCrop ? (
                       <>
@@ -1105,35 +1193,64 @@ export default function FarmerDashboard() {
             >
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">QR Code Generated!</h3>
-                <p className="text-gray-600">{selectedCrop.name}</p>
+                <p className="text-gray-600 font-medium">{selectedCrop.name}</p>
+                {selectedCrop.type && (
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 mt-1 inline-block">
+                    {selectedCrop.type}
+                  </span>
+                )}
               </div>
               
-              <div className="bg-white p-6 rounded-2xl shadow-inner mb-6 flex justify-center">
+              <div className="bg-white p-6 rounded-2xl shadow-inner mb-6 flex flex-col items-center justify-center border border-gray-100">
                 <QRCodeSVG
                   value={
-                    (selectedCrop.qrCode && selectedCrop.qrCode.length < 500)
-                      ? selectedCrop.qrCode
-                      : `FARMCONNECT-${selectedCrop.id}`
+                    selectedCrop.traceUrl ||
+                    `${window.location.origin}/trace/${selectedCrop.id}`
                   }
-                  size={240}
+                  size={220}
                   level="H"
                   includeMargin={true}
                 />
+                <p className="text-xs text-gray-500 mt-3 text-center">
+                  Scan to verify genuine provenance and cultivation telemetry
+                </p>
               </div>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-sm">
+              <div className="space-y-3 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-600">Crop ID:</span>
-                  <span className="font-medium truncate max-w-[150px]" title={selectedCrop.qrCode || `FARMCONNECT-${selectedCrop.id}`}>
-                    {(selectedCrop.qrCode && selectedCrop.qrCode.length < 30) 
-                      ? selectedCrop.qrCode 
-                      : `FARMCONNECT-${selectedCrop.id}`}
+                  <span className="font-mono text-xs font-bold text-gray-800 truncate max-w-[180px]" title={selectedCrop.id}>
+                    {selectedCrop.id}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Blockchain Hash:</span>
-                  <span className="font-mono text-xs">0x{Math.random().toString(16).substr(2, 40)}</span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Canonical QR ID:</span>
+                  <span className="font-mono text-xs text-gray-700 truncate max-w-[180px]" title={selectedCrop.canonicalIdentifier || selectedCrop.qrCode || `FARMCONNECT-${selectedCrop.id}`}>
+                    {selectedCrop.canonicalIdentifier || selectedCrop.qrCode || `FARMCONNECT-${selectedCrop.id}`}
+                  </span>
                 </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Verification Status:</span>
+                  {selectedCrop.blockchainTx || selectedCrop.transactionHash ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      <CheckCircle className="w-3 h-3 text-emerald-600" />
+                      On-Chain Anchored
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      Off-Chain DB Record
+                    </span>
+                  )}
+                </div>
+                {(selectedCrop.blockchainTx || selectedCrop.transactionHash) && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Tx Hash:</span>
+                    <span className="font-mono text-xs text-gray-700 truncate max-w-[180px]">
+                      {selectedCrop.blockchainTx || selectedCrop.transactionHash}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3">
@@ -1144,7 +1261,7 @@ export default function FarmerDashboard() {
                   Close
                 </button>
                 <button
-                  onClick={() => window.open(`/trace/${selectedCrop.id}`, '_blank')}
+                  onClick={() => window.open(selectedCrop.traceUrl || `/trace/${selectedCrop.id}`, '_blank')}
                   className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors"
                 >
                   View Trace

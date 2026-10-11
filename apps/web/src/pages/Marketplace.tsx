@@ -21,6 +21,62 @@ interface Product {
   availableQuantity?: number;
 }
 
+export function getProductCategory(product: { cropType?: string; name?: string }): string {
+  const type = (product.cropType || '').toUpperCase().trim();
+  const name = (product.name || '').toLowerCase().trim();
+
+  // 1. Grains & Cereals
+  if (
+    ['WHEAT', 'RICE', 'BARLEY', 'OATS', 'CORN', 'SORGHUM'].includes(type) ||
+    name.includes('wheat') || name.includes('rice') || name.includes('paddy') ||
+    name.includes('corn') || name.includes('maize') || name.includes('barley') ||
+    name.includes('oat') || name.includes('sorghum') || name.includes('millet')
+  ) {
+    return 'GRAINS';
+  }
+
+  // 2. Vegetables
+  if (
+    name.includes('tomato') || name.includes('potato') || name.includes('onion') ||
+    name.includes('spinach') || name.includes('cabbage') || name.includes('carrot') ||
+    name.includes('vegetable') || name.includes('cucumber') || name.includes('lettuce')
+  ) {
+    return 'VEGETABLES';
+  }
+
+  // 3. Fruits
+  if (
+    name.includes('apple') || name.includes('mango') || name.includes('banana') ||
+    name.includes('orange') || name.includes('grape') || name.includes('fruit') ||
+    name.includes('papaya') || name.includes('guava') || name.includes('lemon')
+  ) {
+    return 'FRUITS';
+  }
+
+  // 4. Spices & Oilseeds
+  if (
+    type === 'CANOLA' || type === 'SOYBEANS' ||
+    name.includes('canola') || name.includes('mustard') || name.includes('soy') ||
+    name.includes('chili') || name.includes('pepper') || name.includes('turmeric') ||
+    name.includes('cumin') || name.includes('coriander') || name.includes('cardamom') ||
+    name.includes('spice')
+  ) {
+    return 'SPICES';
+  }
+
+  // 5. Dairy & Honey
+  if (
+    name.includes('milk') || name.includes('honey') || name.includes('ghee') ||
+    name.includes('butter') || name.includes('paneer') || name.includes('cheese') ||
+    name.includes('dairy')
+  ) {
+    return 'DAIRY';
+  }
+
+  if (type === 'OTHER') return 'VEGETABLES';
+  return 'GRAINS';
+}
+
 export default function Marketplace() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
@@ -215,12 +271,8 @@ export default function Marketplace() {
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.farmName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'ALL' || 
-                           (selectedCategory === 'GRAINS' && product.image === '🌾') ||
-                           (selectedCategory === 'VEGETABLES' && product.image === '🥬') ||
-                           (selectedCategory === 'FRUITS' && product.image === '🍎') ||
-                           (selectedCategory === 'SPICES' && product.image === '🌶️') ||
-                           (selectedCategory === 'DAIRY' && product.image === '🍯');
+    const productCategory = getProductCategory(product);
+    const matchesCategory = selectedCategory === 'ALL' || productCategory === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -442,13 +494,21 @@ export default function Marketplace() {
           {!loading && filteredProducts.length === 0 && (
             <div className="text-center py-20">
               <div className="text-6xl mb-4">🔍</div>
-              <p className="text-2xl text-gray-500 dark:text-gray-400 font-semibold">No products found</p>
-              <p className="text-gray-400 mt-2">Try adjusting your search or filters</p>
+              <p className="text-2xl text-gray-500 dark:text-gray-400 font-semibold">
+                {selectedCategory !== 'ALL'
+                  ? `No products currently listed in "${categories.find(c => c.id === selectedCategory)?.name || selectedCategory}"`
+                  : 'No products found'}
+              </p>
+              <p className="text-gray-400 mt-2 max-w-md mx-auto">
+                {selectedCategory !== 'ALL'
+                  ? 'There are currently no active harvest batches under this category. Clear the filter to browse all available harvests.'
+                  : 'Try adjusting your search query or clear all filters.'}
+              </p>
               <button
                 onClick={() => { setSearchTerm(''); setSelectedCategory('ALL'); }}
-                className="mt-6 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors"
+                className="mt-6 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors shadow-md"
               >
-                Clear Filters
+                View All Products
               </button>
             </div>
           )}
