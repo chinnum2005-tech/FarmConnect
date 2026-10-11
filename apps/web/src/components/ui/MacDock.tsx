@@ -130,7 +130,9 @@ function DockIcon({ item, mouseX }: DockIconProps) {
 export function getRoleDockItems(user: any, activeId?: string): DockItem[] {
   const role = user?.role || 'CONSUMER';
   const handleLogout = () => {
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.clear();
     window.location.href = '/login';
   };
 

@@ -43,6 +43,7 @@ import ConflictResolutionModal from './components/ConflictResolutionModal';
 
 // Types
 import { User } from './types';
+import { authService } from './services/authService';
 
 // Inner component that uses useLocation (must be inside Router)
 function AppContent({
@@ -151,23 +152,28 @@ function App() {
 
   useEffect(() => {
     const initAuth = async () => {
+      const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
       
-      if (userData) {
+      if (token && userData) {
         try {
-          // Import authService dynamically to avoid circular dependency issues if any
-          const { authService } = await import('./services/authService');
           const freshUser = await authService.getMe();
           if (freshUser) {
             setIsAuthenticated(true);
             setUser(freshUser);
           } else {
-            handleLogout(); // Token invalid
+            await handleLogout();
           }
         } catch (error) {
           console.error("Session verification failed:", error);
-          handleLogout();
+          await handleLogout();
         }
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+        setIsAuthenticated(false);
+        setUser(null);
       }
       setLoading(false);
     };
@@ -182,8 +188,14 @@ function App() {
   };
 
   const handleLogout = async () => {
-    const { authService } = await import('./services/authService');
-    await authService.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+    try {
+      await authService.logout();
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     setIsAuthenticated(false);
     setUser(null);
   };

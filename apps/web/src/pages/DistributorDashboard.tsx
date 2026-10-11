@@ -159,7 +159,7 @@ export default function DistributorDashboard() {
     { id: 'history',    icon: Clock,        label: 'History',                    gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',  onClick: () => window.location.href='/supply-chain' },
     { id: 'blockchain', icon: CheckCircle,  label: 'Blockchain Log',             gradient: 'linear-gradient(135deg,#06b6d4,#0e7490)',  onClick: () => window.location.href='/supply-chain' },
     { id: 'market',     icon: Store,        label: 'Marketplace',                gradient: 'linear-gradient(135deg,#ec4899,#be185d)',  onClick: () => window.location.href='/marketplace' },
-    { id: 'logout',     icon: LogOut,       label: 'Logout',                     gradient: 'linear-gradient(135deg,#ef4444,#b91c1c)',  onClick: () => { localStorage.removeItem('user'); window.location.href='/login'; } },
+    { id: 'logout',     icon: LogOut,       label: 'Logout',                     gradient: 'linear-gradient(135deg,#ef4444,#b91c1c)',  onClick: () => { localStorage.removeItem('token'); localStorage.removeItem('user'); sessionStorage.clear(); window.location.href='/login'; } },
   ];
 
   return (

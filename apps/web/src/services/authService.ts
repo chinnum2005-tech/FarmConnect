@@ -44,13 +44,14 @@ export const authService = {
    * Logout user
    */
   logout: async () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
     try {
       await api.post('/api/auth/logout');
     } catch (e) {
       console.error('Logout failed:', e);
     }
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
   },
 
   /**

@@ -27,8 +27,9 @@ export default function Sidebar({ navigation, user, onLogout }: SidebarProps) {
             if (onLogout) {
               onLogout();
             } else {
-              // Global fallback logout if not explicitly passed
+              localStorage.removeItem('token');
               localStorage.removeItem('user');
+              sessionStorage.clear();
               window.location.href = '/login';
             }
           }}

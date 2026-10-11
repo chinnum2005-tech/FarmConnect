@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import NotificationBell from './NotificationBell';
 import GlobalSearch from './GlobalSearch';
 import LanguageSelector from './LanguageSelector';
+import { authService } from '../services/authService';
 
 interface NavbarProps {
   user?: any;
@@ -33,16 +34,28 @@ export default function Navbar({ user: propUser, onLogout: propLogout }: NavbarP
     }
   }, [propUser]);
 
-  const handleLogout = () => {
-    if (propLogout) {
-      propLogout();
-    } else {
-      localStorage.removeItem('user');
-    }
+  const handleLogout = async () => {
+    // 1. Immediately purge client credentials from storage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+
     setIsLoggedIn(false);
     setUser(null);
-    navigate('/');
-    window.location.reload();
+
+    // 2. Perform backend logout cleanup (clearing cookies and server session)
+    try {
+      if (propLogout) {
+        await propLogout();
+      } else {
+        await authService.logout();
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+
+    // 3. Clean SPA navigation to /login without harsh page reload
+    navigate('/login', { replace: true });
   };
 
   const roleConfig: Record<string, { label: string; color: string }> = {

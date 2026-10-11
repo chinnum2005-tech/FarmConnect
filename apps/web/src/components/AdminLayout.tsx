@@ -28,6 +28,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
     logout();
     navigate('/login');
   };
@@ -191,14 +194,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </button>
 
             {/* User Menu - Desktop */}
-            <div className="hidden md:flex items-center gap-3">
-              <div className="text-right">
+            <div className="flex items-center gap-3">
+              <div className="hidden md:block text-right">
                 <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
                 <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
               </div>
               <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
                 {user?.name?.charAt(0)}
               </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </header>

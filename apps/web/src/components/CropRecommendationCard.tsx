@@ -45,22 +45,26 @@ export default function CropRecommendationCard({
       const humidity = weather?.humidity || 65;
       const rainfall = weather?.rainfall || 120;
 
-      try {
-        const recRes = await api.post('/recommendations/crop', {
-          N: soilRes.N,
-          P: soilRes.P,
-          K: soilRes.K,
-          pH: soilRes.pH,
-          temperature: temp,
-          humidity: humidity,
-          rainfall: rainfall,
-        });
-        if (recRes.data?.data?.recommendations && recRes.data.data.recommendations.length > 0) {
-          setRecommendations(recRes.data.data.recommendations);
-          return;
+      const fieldId = farm?.fields?.[0]?.id || farm?.primaryFieldId;
+      if (fieldId) {
+        try {
+          const recRes = await api.post('/recommendations/crop', {
+            fieldId,
+            N: soilRes.N,
+            P: soilRes.P,
+            K: soilRes.K,
+            pH: soilRes.pH,
+            temperature: temp,
+            humidity: humidity,
+            rainfall: rainfall,
+          });
+          if (recRes.data?.data?.recommendations && recRes.data.data.recommendations.length > 0) {
+            setRecommendations(recRes.data.data.recommendations);
+            return;
+          }
+        } catch (backendErr) {
+          console.warn('Backend recommendation API note:', backendErr);
         }
-      } catch (backendErr) {
-        console.warn('Backend recommendation API note:', backendErr);
       }
 
       // Compute agronomic recommendations based on actual soil & weather

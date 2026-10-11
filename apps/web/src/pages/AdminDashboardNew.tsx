@@ -78,7 +78,7 @@ export default function AdminDashboard() {
     { id: 'analytics', icon: PieChart,   label: 'Analytics',                   gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',   onClick: () => window.location.href='/admin/analytics' },
     { id: 'verify',    icon: Eye,        label: 'Verifications',               gradient: 'linear-gradient(135deg,#ec4899,#be185d)',   onClick: () => window.location.href='/admin/verifications' },
     { id: 'settings',  icon: Settings,   label: 'Settings',                    gradient: 'linear-gradient(135deg,#64748b,#334155)',   onClick: () => window.location.href='/admin/settings' },
-    { id: 'logout',    icon: LogOut,     label: 'Logout',                      gradient: 'linear-gradient(135deg,#ef4444,#b91c1c)',   onClick: () => { localStorage.removeItem('user'); window.location.href='/login'; } },
+    { id: 'logout',    icon: LogOut,     label: 'Logout',                      gradient: 'linear-gradient(135deg,#ef4444,#b91c1c)',   onClick: () => { localStorage.removeItem('token'); localStorage.removeItem('user'); sessionStorage.clear(); window.location.href='/login'; } },
   ];
 
   const user = { firstName: 'Admin', lastName: 'User', role: 'ADMIN' };
