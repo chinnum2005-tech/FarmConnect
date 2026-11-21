@@ -53,7 +53,11 @@ export const getMyCrops = async (req: AuthRequest, res: Response) => {
     });
     
     if (!farm) {
-      throw new AppError('No farm found for this user. Please register a farm first.', 404);
+      return res.json({ 
+        success: true, 
+        message: 'No farm registered yet',
+        data: [] 
+      });
     }
 
     const crops = await prisma.crop.findMany({
@@ -117,7 +121,7 @@ export const createCrop = async (req: AuthRequest, res: Response) => {
     });
     
     if (!farm) {
-      throw new AppError('No farm found for this user. Please register a farm first.', 404);
+      throw new AppError('No farm found for this user. Please register a farm first before adding crops.', 400);
     }
 
     // Capacity Validation

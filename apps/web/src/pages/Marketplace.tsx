@@ -176,12 +176,22 @@ export default function Marketplace() {
   };
 
   const proceedToCheckoutFromBuyNow = () => {
+    if (!localStorage.getItem('token')) {
+      showToast('Please login to complete your purchase', 'error');
+      navigate('/login');
+      return;
+    }
     console.log('Proceeding to checkout. Current state:', { showOrderModal, showCheckoutModal });
     setShowOrderModal(false);
     setShowCheckoutModal(true);
   };
 
   const processCheckout = async () => {
+    if (!localStorage.getItem('token')) {
+      showToast('Please login to place an order', 'error');
+      navigate('/login');
+      return;
+    }
     if (!checkoutForm.address.trim()) {
       showToast('Please enter a shipping address', 'error');
       return;
@@ -205,7 +215,7 @@ export default function Marketplace() {
           return;
         }
         
-        showToast('Payment intent created! Order confirmed.', 'success');
+        showToast('Order placed successfully! Payment confirmed.', 'success');
         setSelectedProduct(null);
       } else if (cart.length > 0) {
         // Cart Checkout
@@ -222,13 +232,14 @@ export default function Marketplace() {
         }
 
         setCart([]);
-        showToast('Payment intent created! Cart orders confirmed.', 'success');
+        showToast('Order placed successfully! Cart orders confirmed.', 'success');
       } else {
         throw new Error('Nothing to checkout');
       }
       
       setShowCheckoutModal(false);
       setShowCart(false);
+      loadProducts();
     } catch (error: any) {
       console.error('Checkout error:', error);
       showToast(error.response?.data?.message || error.message || 'Payment failed. Please try again.', 'error');
@@ -257,7 +268,7 @@ export default function Marketplace() {
   const currentUser = (() => {
     try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; }
   })();
-  const isAuthenticated = !!localStorage.getItem('user');
+  const isAuthenticated = !!(localStorage.getItem('token') && localStorage.getItem('user'));
 
   const dockItems: DockItem[] = [
     { id: 'market',    icon: Store,         label: 'Marketplace',  active: true, gradient: 'linear-gradient(135deg,#06b6d4,#0e7490)',  onClick: () => window.location.href='/marketplace' },

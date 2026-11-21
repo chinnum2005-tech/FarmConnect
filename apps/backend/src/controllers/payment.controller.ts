@@ -81,7 +81,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   }
 };
 
-async function processSuccessfulPayment(orderId: string, session: Stripe.Checkout.Session, userId: string) {
+export async function processSuccessfulPayment(orderId: string, session: Stripe.Checkout.Session, userId: string) {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: { include: { product: true } } }

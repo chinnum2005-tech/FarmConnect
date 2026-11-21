@@ -37,11 +37,16 @@ def fetch_satellite_ndvi(lat: float, lon: float, date_str: str, disable_simulati
     project_id = os.getenv("EARTH_ENGINE_PROJECT_ID")
     
     if not simulation_mode:
-        if not project_id:
-            raise RuntimeError("Google Earth Engine project ID not configured. Please set EARTH_ENGINE_PROJECT_ID in your environment.")
-        initialized = init_earth_engine()
-        if not initialized:
-            raise RuntimeError("Failed to initialize Google Earth Engine. Please check your credentials and project ID.")
+        if not disable_simulation:
+            if not project_id or not init_earth_engine():
+                print("[GEE NOTE] GEE not fully configured for local development. Operating in calibrated simulation mode.", flush=True)
+                simulation_mode = True
+        else:
+            if not project_id:
+                raise RuntimeError("Google Earth Engine project ID not configured. Please set EARTH_ENGINE_PROJECT_ID in your environment.")
+            initialized = init_earth_engine()
+            if not initialized:
+                raise RuntimeError("Failed to initialize Google Earth Engine. Please check your credentials and project ID.")
 
     if simulation_mode:
         # Seed generator deterministically based on coordinates and date

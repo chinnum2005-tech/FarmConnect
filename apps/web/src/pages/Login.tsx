@@ -30,7 +30,12 @@ export default function Login({ onLogin }: LoginProps) {
 
     try {
       if (isRegister) {
-        const response = await authService.register(formData);
+        const payload = {
+          ...formData,
+          firstName: formData.firstName.trim() || 'User',
+          lastName: formData.lastName.trim() || 'Member',
+        };
+        const response = await authService.register(payload);
         if (response.success && response.data) {
           localStorage.setItem('user', JSON.stringify(response.data.user));
           onLogin(response.data.user);
@@ -140,7 +145,7 @@ export default function Login({ onLogin }: LoginProps) {
           </div>
 
           {/* Sign In / Register toggle */}
-          <div className="flex gap-1 bg-white/10 rounded-xl p-1 mb-6">
+          <div className="flex gap-1 bg-white/10 rounded-xl p-1 mb-5">
             {['Sign In', 'Register'].map((tab, i) => (
               <button
                 key={tab}
@@ -155,6 +160,58 @@ export default function Login({ onLogin }: LoginProps) {
               </button>
             ))}
           </div>
+
+          {/* Quick Demo Credentials */}
+          {!isRegister && (
+            <div className="mb-5 bg-white/5 border border-white/10 rounded-xl p-3">
+              <p className="text-xs text-slate-400 font-medium mb-2 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-green-400" />
+                Quick Demo Sign-In (Click to select):
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, email: 'farmer@farmconnect.in', password: 'farmer123' }));
+                    setError('');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 text-xs font-semibold transition-all text-center"
+                >
+                  🌾 Farmer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, email: 'distributor@farmconnect.in', password: 'dist123' }));
+                    setError('');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-semibold transition-all text-center"
+                >
+                  🚚 Distributor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, email: 'consumer@farmconnect.in', password: 'consumer123' }));
+                    setError('');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition-all text-center"
+                >
+                  🛒 Consumer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, email: 'admin@farmconnect.in', password: 'admin123' }));
+                    setError('');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 text-xs font-semibold transition-all text-center"
+                >
+                  ⚙️ Admin
+                </button>
+              </div>
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {error && (

@@ -49,7 +49,7 @@ export const register = async (req: AuthRequest, res: Response, next: NextFuncti
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      throw new AppError('Email already registered', 400);
+      throw new AppError('Email is already registered. Please sign in instead.', 400);
     }
 
     // Hash password (using stronger salt rounds)
@@ -60,8 +60,8 @@ export const register = async (req: AuthRequest, res: Response, next: NextFuncti
       data: {
         email,
         password: hashedPassword,
-        firstName,
-        lastName,
+        firstName: firstName || 'User',
+        lastName: lastName || 'Member',
         role: role || 'CONSUMER',
         phone,
       },

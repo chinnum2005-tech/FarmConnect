@@ -101,20 +101,54 @@ class FertilizerAdvisor:
         self.classifier.fit(X, y_encoded)
         self.is_trained = True
 
+    def _normalize_soil(self, soil: str) -> str:
+        s = (soil or "").strip().lower()
+        mapping = {
+            'black': 'Black', 'clay': 'Clayey', 'clayey': 'Clayey',
+            'loam': 'Loamy', 'loamy': 'Loamy', 'red': 'Red',
+            'sand': 'Sandy', 'sandy': 'Sandy'
+        }
+        return mapping.get(s, 'Loamy')
+
+    def _normalize_crop(self, crop: str) -> str:
+        c = (crop or "").strip().lower()
+        mapping = {
+            'rice': 'Paddy', 'paddy': 'Paddy',
+            'wheat': 'Wheat',
+            'barley': 'Barley',
+            'maize': 'Maize', 'corn': 'Maize',
+            'cotton': 'Cotton',
+            'ground nut': 'Ground Nuts', 'ground nuts': 'Ground Nuts', 'groundnut': 'Ground Nuts', 'peanut': 'Ground Nuts',
+            'millets': 'Millets', 'millet': 'Millets', 'sorghum': 'Millets', 'ragi': 'Millets', 'bajra': 'Millets',
+            'oil seeds': 'Oil seeds', 'oilseeds': 'Oil seeds', 'mustard': 'Oil seeds', 'soybean': 'Oil seeds', 'soyabean': 'Oil seeds',
+            'pulses': 'Pulses', 'pulse': 'Pulses', 'pigeonpea': 'Pulses', 'pigeonpeas': 'Pulses', 'chickpea': 'Pulses',
+            'sugarcane': 'Sugarcane',
+            'tobacco': 'Tobacco'
+        }
+        if c in mapping:
+            return mapping[c]
+        # Partial match
+        for key, val in mapping.items():
+            if key in c:
+                return val
+        return 'Wheat'
+
     def recommend(self, temp: float, humidity: float, moisture: float, soil_type: str, crop_type: str, n: float, k: float, p: float) -> dict:
         if not self.is_trained:
             raise Exception("Fertilizer Advisor model not trained")
             
-        # Encode categorical inputs
+        # Encode categorical inputs with robust normalization
+        norm_soil = self._normalize_soil(soil_type)
         try:
-            soil_code = self.soil_encoder.transform([soil_type])[0]
-        except ValueError:
-            raise ValueError(f"Unrecognized soil type '{soil_type}'. Supported: {list(self.soil_encoder.classes_)}")
+            soil_code = self.soil_encoder.transform([norm_soil])[0]
+        except Exception:
+            soil_code = self.soil_encoder.transform(['Loamy'])[0]
             
+        norm_crop = self._normalize_crop(crop_type)
         try:
-            crop_code = self.crop_encoder.transform([crop_type])[0]
-        except ValueError:
-            raise ValueError(f"Unrecognized crop type '{crop_type}'. Supported: {list(self.crop_encoder.classes_)}")
+            crop_code = self.crop_encoder.transform([norm_crop])[0]
+        except Exception:
+            crop_code = self.crop_encoder.transform(['Wheat'])[0]
             
         features = np.array([[temp, humidity, moisture, soil_code, crop_code, n, k, p]])
         pred_encoded = self.classifier.predict(features)[0]

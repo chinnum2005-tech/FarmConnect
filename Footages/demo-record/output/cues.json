@@ -1,0 +1,254 @@
+{
+  "stamp": "20261119183700",
+  "base": "http://localhost:5173",
+  "users": {
+    "farmer": {
+      "email": "walk.farmer.20261119183700@agrotrace.test",
+      "firstName": "Asha",
+      "lastName": "Patel",
+      "role": "FARMER"
+    },
+    "consumer": {
+      "email": "walk.consumer.20261119183700@agrotrace.test",
+      "firstName": "Rohan",
+      "lastName": "Mehta",
+      "role": "CONSUMER"
+    },
+    "distributor": {
+      "email": "walk.distributor.20261119183700@agrotrace.test",
+      "firstName": "Vikram",
+      "lastName": "Singh",
+      "role": "DISTRIBUTOR"
+    }
+  },
+  "password": "DemoWalk123!",
+  "cues": [
+    {
+      "index": 1,
+      "text": "Welcome to AgroTrace, also known as FarmConnect. This is a blockchain powered farm to table platform connecting farmers, distributors, and consumers.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-001.wav",
+      "startMs": 7795,
+      "durationSec": 11.057279
+    },
+    {
+      "index": 2,
+      "text": "Before logging in, anyone can browse the marketplace, verify harvests, and explore blockchain provenance.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-002.wav",
+      "startMs": 31512,
+      "durationSec": 8.227937
+    },
+    {
+      "index": 3,
+      "text": "The marketplace lists verified farm produce with transparent pricing and distributor fees.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-003.wav",
+      "startMs": 49421,
+      "durationSec": 5.98839
+    },
+    {
+      "index": 4,
+      "text": "Consumers can verify a harvest batch to confirm authenticity on the blockchain registry.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-004.wav",
+      "startMs": 64592,
+      "durationSec": 5.838231
+    },
+    {
+      "index": 5,
+      "text": "The blockchain explorer shows ledger activity for supply chain events.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-005.wav",
+      "startMs": 81710,
+      "durationSec": 4.933515
+    },
+    {
+      "index": 6,
+      "text": "Weather intelligence helps farmers plan irrigation and harvest windows.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-006.wav",
+      "startMs": 97407,
+      "durationSec": 4.788662
+    },
+    {
+      "index": 7,
+      "text": "AgroBot AI answers farming and supply chain questions in natural language.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-007.wav",
+      "startMs": 111094,
+      "durationSec": 5.18839
+    },
+    {
+      "index": 8,
+      "text": "Now we create a brand new Farmer account for Asha Patel.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-008.wav",
+      "startMs": 120955,
+      "durationSec": 3.99873
+    },
+    {
+      "index": 9,
+      "text": "Farmer registration succeeded. The platform routes farmers to their farm dashboard.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-009.wav",
+      "startMs": 136657,
+      "durationSec": 6.253469
+    },
+    {
+      "index": 10,
+      "text": "New farmers complete an onboarding wizard. First we set the farm profile and certification.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-010.wav",
+      "startMs": 148846,
+      "durationSec": 6.778413
+    },
+    {
+      "index": 11,
+      "text": "Next we pin the farm location on the map for satellite NDVI and soil intelligence.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-011.wav",
+      "startMs": 159041,
+      "durationSec": 5.848299
+    },
+    {
+      "index": 12,
+      "text": "AgroTrace pulls soil chemistry telemetry. We continue to crop batch setup.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-012.wav",
+      "startMs": 171775,
+      "durationSec": 6.258322
+    },
+    {
+      "index": 13,
+      "text": "We register the first crop batch so yield AI and blockchain provenance can activate.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-013.wav",
+      "startMs": 183153,
+      "durationSec": 5.463447
+    },
+    {
+      "index": 14,
+      "text": "Onboarding complete. Exploring the farmer dashboard features.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-014.wav",
+      "startMs": 194768,
+      "durationSec": 5.063537
+    },
+    {
+      "index": 15,
+      "text": "Farm overview shows live weather telemetry and farm health.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-015.wav",
+      "startMs": 201847,
+      "durationSec": 4.213605
+    },
+    {
+      "index": 16,
+      "text": "Crops and Yield AI estimates production with the LightGBM regressor.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-016.wav",
+      "startMs": 211250,
+      "durationSec": 4.77873
+    },
+    {
+      "index": 17,
+      "text": "Satellite NDVI shows canopy health from remote sensing.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-017.wav",
+      "startMs": 221044,
+      "durationSec": 4.328798
+    },
+    {
+      "index": 18,
+      "text": "AI crop advisory recommends what to plant next based on soil and climate.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-018.wav",
+      "startMs": 230416,
+      "durationSec": 5.108526
+    },
+    {
+      "index": 19,
+      "text": "Orders and dispatch tracks consumer purchases ready for shipment.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-019.wav",
+      "startMs": 240630,
+      "durationSec": 4.373605
+    },
+    {
+      "index": 20,
+      "text": "Farmers can also open Weather AI, AgroBot, blockchain explorer, and the farm gallery from the dock.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-020.wav",
+      "startMs": 249834,
+      "durationSec": 6.838277
+    },
+    {
+      "index": 21,
+      "text": "That completes the farmer journey. Logging out to create a consumer account.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-021.wav",
+      "startMs": 278809,
+      "durationSec": 5.668435
+    },
+    {
+      "index": 22,
+      "text": "Creating a new Consumer account for Rohan Mehta.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-022.wav",
+      "startMs": 288217,
+      "durationSec": 3.46381
+    },
+    {
+      "index": 23,
+      "text": "Consumers land in the marketplace to browse and purchase farm produce.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-023.wav",
+      "startMs": 298636,
+      "durationSec": 4.763628
+    },
+    {
+      "index": 24,
+      "text": "Adding a product to the cart to demonstrate consumer purchasing.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-024.wav",
+      "startMs": 310043,
+      "durationSec": 4.168571
+    },
+    {
+      "index": 25,
+      "text": "Buy Now opens secure checkout with shipping details.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-025.wav",
+      "startMs": 317903,
+      "durationSec": 3.693741
+    },
+    {
+      "index": 26,
+      "text": "Here a consumer can paste a batch I D or scan QR style verification to confirm farm origin.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-026.wav",
+      "startMs": 335516,
+      "durationSec": 6.588435
+    },
+    {
+      "index": 27,
+      "text": "Consumers can ask AgroBot about product freshness, farms, and traceability.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-027.wav",
+      "startMs": 350543,
+      "durationSec": 5.683447
+    },
+    {
+      "index": 28,
+      "text": "Consumer walkthrough complete. Logging out for the distributor role.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-028.wav",
+      "startMs": 369961,
+      "durationSec": 5.243583
+    },
+    {
+      "index": 29,
+      "text": "Creating a new Distributor account for Vikram Singh.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-029.wav",
+      "startMs": 378949,
+      "durationSec": 3.603719
+    },
+    {
+      "index": 30,
+      "text": "Distributors get a shipments hub to claim orders, update transit status, and record supply chain events.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-030.wav",
+      "startMs": 389609,
+      "durationSec": 7.587982
+    },
+    {
+      "index": 31,
+      "text": "Distributors can also browse the marketplace and inspect blockchain ledger entries.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-031.wav",
+      "startMs": 410804,
+      "durationSec": 5.608345
+    },
+    {
+      "index": 32,
+      "text": "That finishes the full AgroTrace walkthrough across farmer, consumer, and distributor roles. Thank you for watching.",
+      "wav": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\audio\\cue-032.wav",
+      "startMs": 430599,
+      "durationSec": 8.168027
+    }
+  ],
+  "rawVideo": "C:\\Users\\chinn\\Desktop\\AgroTrace\\Footages\\demo-record\\output\\video\\page@9c8f7fae76dde45730957d3e0309da38.webm",
+  "startedAt": "2026-11-19T18:37:38.281Z",
+  "durationMs": 443150
+}

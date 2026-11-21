@@ -35,23 +35,25 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith('http')) return;
 
-  // Skip API calls — always network
-  if (event.request.url.includes('/api/auth') || 
-      event.request.url.includes('/api/user') || 
-      event.request.url.includes('/api/payment') ||
-      event.request.url.includes('/api/orders') ||
-      event.request.url.includes('/api/farm') ||
-      event.request.url.includes('/api/chat')) {
-    return; // Don't cache sensitive routes
+  // Skip API calls and external services — always direct network
+  const url = event.request.url;
+  if (url.includes('/api/') || 
+      url.includes(':3001') || 
+      url.includes(':8000') || 
+      url.includes(':8001') ||
+      url.includes('open-meteo.com') ||
+      url.includes('openweathermap.org') ||
+      url.includes('@vite') ||
+      url.includes('/@fs/') ||
+      url.includes('/src/')) {
+    return;
   }
-  
-  if (event.request.url.includes('openweathermap.org')) return;
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache successful responses
-        if (response.status === 200) {
+        // Cache successful static responses
+        if (response.status === 200 && event.request.method === 'GET') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
@@ -63,15 +65,11 @@ self.addEventListener('fetch', (event) => {
         // Network failed — try cache
         return caches.match(event.request).then((cached) => {
           if (cached) return cached;
-          // Return offline page for navigation requests
+          // Fallback to index.html for navigation requests
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('/index.html').then(html => html || fetch('/index.html'));
           }
-          return new Response('Network error and no cache available', {
-            status: 503,
-            statusText: 'Service Unavailable',
-            headers: new Headers({ 'Content-Type': 'text/plain' })
-          });
+          return new Response('', { status: 404, statusText: 'Not Found' });
         });
       })
   );

@@ -436,6 +436,21 @@ async def satellite_fetch_ndvi(request: Request, ndvi_req: SatelliteNDVIRequest,
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Mount ML inference routers for unified endpoint availability
+try:
+    ml_inference_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "apps", "ml-inference"))
+    if ml_inference_path not in sys.path:
+        sys.path.insert(0, ml_inference_path)
+    from routers import health as ml_health, prediction as ml_prediction, recommendation as ml_recommendation, rag as ml_rag
+    app.include_router(ml_health.router)
+    app.include_router(ml_prediction.router)
+    app.include_router(ml_recommendation.router)
+    app.include_router(ml_rag.router)
+    print("[AI-SERVICE] Successfully mounted ML inference routers on port 8000.", flush=True)
+except Exception as e:
+    print(f"[AI-SERVICE WARNING] Could not mount ML inference routers: {e}", flush=True)
+
+
 @app.get("/")
 async def root():
     """Root endpoint"""

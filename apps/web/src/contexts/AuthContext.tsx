@@ -32,12 +32,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setUser(null);
+          return;
+        }
         const currentUser = await authService.getMe();
         if (currentUser) {
           setUser(currentUser);
+        } else {
+          setUser(null);
         }
-      } catch (error) {
-        console.error('Session expired');
+      } catch {
+        setUser(null);
       } finally {
         setIsLoading(false);
       }

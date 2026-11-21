@@ -21,7 +21,7 @@ class YieldPredictionResponse(BaseModel):
     confidenceMessage: str
 
 @router.post("/predict-yield", response_model=YieldPredictionResponse)
-async def get_yield_prediction(req: YieldPredictionRequest):
+def get_yield_prediction(req: YieldPredictionRequest):
     try:
         # Predict using LightGBM model
         pred_result = predict_yield(

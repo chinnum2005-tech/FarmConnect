@@ -1,10 +1,17 @@
 import axios from 'axios';
 
 // Dynamically match the backend URL from environment variables with fallback
+const isLocalhost = 
+  typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || 
+   window.location.hostname === '127.0.0.1' || 
+   window.location.hostname === '[::1]' ||
+   window.location.port === '5173');
+
 const API_BASE_URL = 
   import.meta.env.VITE_BACKEND_URL || 
   import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD ? 'https://agrotrace-backend.onrender.com' : `http://${window.location.hostname}:3001`);
+  (isLocalhost ? `http://${window.location.hostname || 'localhost'}:3001` : 'https://agrotrace-backend.onrender.com');
 
 const api = axios.create({
   baseURL: `${API_BASE_URL.replace(/\/$/, '')}/api/v1`,
@@ -33,6 +40,15 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      const url = error.config?.url || '';
+      // Don't wipe storage on login/register attempt failures or refresh token calls
+      if (!url.includes('/login') && !url.includes('/register') && !url.includes('/refresh-token')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+      }
+    }
     if (error.response?.status === 409 && error.response.data?.serverData) {
       window.dispatchEvent(new CustomEvent('api-conflict', {
         detail: {

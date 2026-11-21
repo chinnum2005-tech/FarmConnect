@@ -54,32 +54,28 @@ if errorlevel 1 (
 )
 for /f "tokens=*" %%v in ('node --version 2^>nul') do echo [OK] Node.js detected: %%v
 
-REM Auto-discover Python if missing from active terminal PATH
-where python >nul 2>nul
-if errorlevel 1 (
-    if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
-        set "PATH=%LOCALAPPDATA%\Programs\Python\Python311;%LOCALAPPDATA%\Programs\Python\Python311\Scripts;%PATH%"
-    ) else if exist "%LOCALAPPDATA%\Programs\Python\Python312\python.exe" (
-        set "PATH=%LOCALAPPDATA%\Programs\Python\Python312;%LOCALAPPDATA%\Programs\Python\Python312\Scripts;%PATH%"
-    ) else if exist "%LOCALAPPDATA%\Programs\Python\Python310\python.exe" (
-        set "PATH=%LOCALAPPDATA%\Programs\Python\Python310;%LOCALAPPDATA%\Programs\Python\Python310\Scripts;%PATH%"
-    ) else if exist "C:\Python311\python.exe" (
-        set "PATH=C:\Python311;C:\Python311\Scripts;%PATH%"
-    ) else if exist "C:\Python312\python.exe" (
-        set "PATH=C:\Python312;C:\Python312\Scripts;%PATH%"
-    ) else if exist ".venv\Scripts\python.exe" (
-        set "PATH=%~dp0.venv\Scripts;%PATH%"
-    )
+REM Auto-discover Python (prioritize repo virtual environment .venv or Python 3.11)
+set "PYTHON_EXE="
+if exist "%~dp0.venv\Scripts\python.exe" (
+    set "PYTHON_EXE=%~dp0.venv\Scripts\python.exe"
+    set "PATH=%~dp0.venv\Scripts;%PATH%"
+) else if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
+    set "PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe"
+    set "PATH=%LOCALAPPDATA%\Programs\Python\Python311;%LOCALAPPDATA%\Programs\Python\Python311\Scripts;%PATH%"
+) else if exist "C:\Python311\python.exe" (
+    set "PYTHON_EXE=C:\Python311\python.exe"
+    set "PATH=C:\Python311;C:\Python311\Scripts;%PATH%"
+) else (
+    where python >nul 2>nul
+    if not errorlevel 1 set "PYTHON_EXE=python"
 )
 
-where python >nul 2>nul
-if errorlevel 1 (
+if "%PYTHON_EXE%"=="" (
     set PYTHON_AVAILABLE=1
-    echo [WARN] Python not found in PATH. AI yield prediction service will be skipped.
+    echo [WARN] Python not found in PATH or .venv. AI yield prediction service will be skipped.
 ) else (
     set PYTHON_AVAILABLE=0
-    echo [OK] Python detected:
-    python --version
+    for /f "tokens=*" %%v in ('"%PYTHON_EXE%" --version 2^>nul') do echo [OK] Python detected: %%v [!PYTHON_EXE!]
 )
 echo.
 
@@ -121,26 +117,26 @@ if "%PYTHON_AVAILABLE%" NEQ "0" (
     echo [SKIP] AI dependencies check skipped [Python not available].
     goto python_deps_done
 )
-if not exist "apps\ml-inference\requirements.txt" (
-    echo [WARN] apps\ml-inference\requirements.txt not found!
-    goto python_deps_done
-)
-echo [INFO] Verifying Python libraries...
-python -m pip install -r apps\ml-inference\requirements.txt >nul 2>nul
+"%PYTHON_EXE%" -c "import uvicorn, fastapi" >nul 2>nul
 if errorlevel 1 (
-    echo [WARN] Python dependency check failed. AI Service might encounter issues.
-) else (
-    echo [OK] Python dependencies verified.
+    echo [INFO] Installing required Python libraries...
+    if exist "services\ai-service\requirements.txt" (
+        "%PYTHON_EXE%" -m pip install -r services\ai-service\requirements.txt >nul 2>nul
+    )
+    if exist "apps\ml-inference\requirements.txt" (
+        "%PYTHON_EXE%" -m pip install -r apps\ml-inference\requirements.txt >nul 2>nul
+    )
 )
+echo [OK] Python dependencies verified.
 :python_deps_done
 echo.
 
 REM 6. Port Check & Stale Process Cleanup
 echo [6/6] Verifying Service Ports & Freeing Stale Background Processes...
-for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr /R /C:":8545 .*LISTENING" /C:":3001 .*LISTENING" /C:":5173 .*LISTENING" /C:":8000 .*LISTENING"') do (
+for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr /R /C:":8545 .*LISTENING" /C:":3001 .*LISTENING" /C:":5173 .*LISTENING" /C:":8000 .*LISTENING" /C:":8001 .*LISTENING"') do (
     taskkill /F /PID %%a >nul 2>nul
 )
-echo [OK] Ports 8545, 3001, 5173, 8000 cleared for fresh consoles.
+echo [OK] Ports 8545, 3001, 5173, 8000, 8001 cleared for fresh consoles.
 echo.
 
 echo ==================================================================
@@ -149,7 +145,7 @@ echo ==================================================================
 echo.
 
 REM 1. Hardhat Blockchain Node
-echo [Service 1/4] Starting Hardhat Local Blockchain Node on Port 8545...
+echo [Service 1/5] Starting Hardhat Local Blockchain Node on Port 8545...
 start "AgroTrace - Hardhat Blockchain" cmd /k "cd /d "%~dp0blockchain" && echo Starting Hardhat node on http://localhost:8545 ... && npx.cmd hardhat node"
 ping 127.0.0.1 -n 6 >nul
 
@@ -161,20 +157,29 @@ if exist "blockchain\scripts\deploy.js" (
 )
 
 REM 2. Backend API
-echo [Service 2/4] Starting Backend API Server on Port 3001...
+echo [Service 2/5] Starting Backend API Server on Port 3001...
 start "AgroTrace - Backend API" cmd /k "cd /d "%~dp0apps\backend" && echo Starting backend on http://localhost:3001 ... && npm.cmd run dev"
 ping 127.0.0.1 -n 3 >nul
 
 REM 3. Web Frontend
-echo [Service 3/4] Starting Web Frontend on Port 5173...
+echo [Service 3/5] Starting Web Frontend on Port 5173...
 start "AgroTrace - Web Frontend" cmd /k "cd /d "%~dp0apps\web" && echo Starting frontend on http://localhost:5173 ... && npm.cmd run dev"
 ping 127.0.0.1 -n 3 >nul
 
-REM 4. AI Service
+REM 4. AI Advisory Service (FastAPI)
+if "%PYTHON_AVAILABLE%" EQU "0" (
+    if exist "services\ai-service\main.py" (
+        echo [Service 4/5] Starting AI Advisory Service on Port 8000...
+        start "AgroTrace - AI Service" cmd /k "cd /d "%~dp0services\ai-service" && echo Starting AI Advisory Service on http://localhost:8000 ... && "%PYTHON_EXE%" -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+        ping 127.0.0.1 -n 2 >nul
+    )
+)
+
+REM 5. ML Inference Service (FastAPI)
 if "%PYTHON_AVAILABLE%" EQU "0" (
     if exist "apps\ml-inference\main.py" (
-        echo [Service 4/4] Starting AI Inference Service on Port 8000...
-        start "AgroTrace - AI Service" cmd /k "cd /d "%~dp0apps\ml-inference" && echo Starting AI service on http://localhost:8000 ... && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+        echo [Service 5/5] Starting ML Inference Service on Port 8001...
+        start "AgroTrace - ML Inference" cmd /k "cd /d "%~dp0apps\ml-inference" && echo Starting ML Inference Service on http://localhost:8001 ... && "%PYTHON_EXE%" -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
     )
 )
 
@@ -184,10 +189,11 @@ echo    ALL AGROTRACE SERVICES ARE ACTIVE AND RUNNING!
 echo ==================================================================
 echo.
 echo  Access URLs:
-echo    - Web Frontend:     http://localhost:5173
-echo    - Backend API:      http://localhost:3001
-echo    - AI ML Service:    http://localhost:8000
-echo    - Hardhat Node:     http://localhost:8545
+echo    - Web Frontend:         http://localhost:5173
+echo    - Backend API:          http://localhost:3001
+echo    - AI Advisory Service:  http://localhost:8000
+echo    - ML Inference Service: http://localhost:8001
+echo    - Hardhat Node:         http://localhost:8545
 echo.
 echo  Instructions:
 echo    - Keep the service terminal windows open while using the app.

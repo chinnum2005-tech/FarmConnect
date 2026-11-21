@@ -26,7 +26,7 @@ class CropPredictionResponse(BaseModel):
     modelProvenance: str
 
 @router.post("/crop", response_model=CropPredictionResponse)
-async def get_crop_recommendation(req: CropPredictionRequest):
+def get_crop_recommendation(req: CropPredictionRequest):
     try:
         recommended_crop, alternatives, confidence = predict_crop(
             n=req.N,

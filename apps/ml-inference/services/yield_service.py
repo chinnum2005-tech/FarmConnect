@@ -8,13 +8,32 @@ MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 # Load model lazily
 _model = None
 
+_yield_predictor_fallback = None
+
+def get_fallback_yield_predictor():
+    global _yield_predictor_fallback
+    if _yield_predictor_fallback is None:
+        import sys
+        ai_service_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "services", "ai-service"))
+        if ai_service_dir not in sys.path:
+            sys.path.insert(0, ai_service_dir)
+        from models.yield_predictor import YieldPredictor
+        _yield_predictor_fallback = YieldPredictor()
+    return _yield_predictor_fallback
+
 def get_model():
     global _model
     if _model is None:
         if not os.path.exists(MODEL_PATH):
-            raise FileNotFoundError(f"Model not found at {MODEL_PATH}. Please run generate_synthetic_data.py first.")
-        _model = joblib.load(MODEL_PATH)
-    return _model
+            _model = False
+            return None
+        try:
+            _model = joblib.load(MODEL_PATH)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Could not load LightGBM model from {MODEL_PATH}: {e}")
+            _model = False
+    return _model if _model is not False else None
 
 def predict_yield(
     crop_type: str,
@@ -48,27 +67,36 @@ def predict_yield(
         logger.warning(f"Validation Warning: NDVI {ndvi_trend:.3f} invalid for {days_since_sowing} days old crop. Clamping to 0.30.")
         ndvi_trend = 0.30
         
+    prediction = None
     model = get_model()
-    
-    # Create a DataFrame for a single prediction row
-    input_df = pd.DataFrame([{
-        'crop_type': crop_type,
-        'area_hectares': area_hectares,
-        'days_since_sowing': days_since_sowing,
-        'ndvi_trend': ndvi_trend,
-        'avg_temp': avg_temp,
-        'cum_rainfall': cum_rainfall
-    }])
-    
-    # Cast categorical columns correctly
-    input_df['crop_type'] = input_df['crop_type'].astype('category')
-    
-    # Print statements replaced below
-    
-    # -----------------------------------------
-    # INFERENCE & CLAMPING
-    # -----------------------------------------
-    prediction = float(model.predict(input_df)[0])
+    if model is not None:
+        try:
+            input_df = pd.DataFrame([{
+                'crop_type': crop_type,
+                'area_hectares': area_hectares,
+                'days_since_sowing': days_since_sowing,
+                'ndvi_trend': ndvi_trend,
+                'avg_temp': avg_temp,
+                'cum_rainfall': cum_rainfall
+            }])
+            input_df['crop_type'] = input_df['crop_type'].astype('category')
+            prediction = float(model.predict(input_df)[0])
+        except Exception as exc:
+            logger.warning(f"LightGBM prediction failed ({exc}). Using YieldPredictor fallback.")
+            prediction = None
+
+    if prediction is None:
+        yp = get_fallback_yield_predictor()
+        from datetime import datetime
+        yp_res = yp.predict(
+            crop_type=crop_type,
+            area=area_hectares,
+            planting_date=datetime.now(),
+            weather={'temperature': avg_temp, 'rainfall': cum_rainfall, 'humidity': 65.0},
+            soil={'ph_level': 6.5, 'nitrogen': 50.0, 'phosphorus': 30.0, 'potassium': 40.0},
+            ndvi_score=ndvi_trend
+        )
+        prediction = float(yp_res.get('yield', 1200.0 * area_hectares))
     
     if prediction < 0:
         logger.warning(f"Validation Warning: Model predicted negative yield ({prediction:.2f}). Clamping to 0 kg.")

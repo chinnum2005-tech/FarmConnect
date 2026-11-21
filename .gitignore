@@ -77,3 +77,11 @@ services/blockchain/scripts/deploy-provenance.js.map
 services/blockchain/scripts/deploy-provenance.d.ts
 services/blockchain/scripts/deploy-provenance.d.ts.map
 
+@'
+
+# Generated demonstration media - keep locally, exclude from Git
+Footages/demo-record/output/audio/
+Footages/demo-record/output/video/
+Footages/demo-record/output/*.mp4
+'@ | Add-Content -Path .gitignore
+

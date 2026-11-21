@@ -20,6 +20,9 @@ export const authService = {
     if (response.data?.data?.token) {
       localStorage.setItem('token', response.data.data.token);
     }
+    if (response.data?.data?.refreshToken) {
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
     if (response.data?.data?.user) {
       localStorage.setItem('user', JSON.stringify(response.data.data.user));
     }
@@ -34,6 +37,9 @@ export const authService = {
     if (response.data?.data?.token) {
       localStorage.setItem('token', response.data.data.token);
     }
+    if (response.data?.data?.refreshToken) {
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
     if (response.data?.data?.user) {
       localStorage.setItem('user', JSON.stringify(response.data.data.user));
     }
@@ -45,6 +51,7 @@ export const authService = {
    */
   logout: async () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     sessionStorage.clear();
     try {
@@ -58,6 +65,11 @@ export const authService = {
    * Get fresh user data from backend using token
    */
   getMe: async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return null;
+    }
+
     try {
       const response = await api.get('/api/auth/me');
       if (response.data && response.data.success) {
@@ -65,9 +77,34 @@ export const authService = {
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
         return response.data.data.user;
       }
-    } catch (error) {
-      console.error('Failed to verify token:', error);
-      throw error;
+    } catch (error: any) {
+      // If token expired, attempt token refresh if refreshToken is present
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken && error.response?.status === 401) {
+        try {
+          const refreshRes = await api.post('/api/auth/refresh-token', { refreshToken });
+          if (refreshRes.data?.data?.token) {
+            localStorage.setItem('token', refreshRes.data.data.token);
+            if (refreshRes.data.data.refreshToken) {
+              localStorage.setItem('refreshToken', refreshRes.data.data.refreshToken);
+            }
+            const retryMe = await api.get('/api/auth/me');
+            if (retryMe.data?.data?.user) {
+              localStorage.setItem('user', JSON.stringify(retryMe.data.data.user));
+              return retryMe.data.data.user;
+            }
+          }
+        } catch {
+          // Token refresh also failed
+        }
+      }
+
+      // If token is invalid or expired, clean up stale session data
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      return null;
     }
     return null;
   },
@@ -96,6 +133,6 @@ export const authService = {
    * Check if user is authenticated
    */
   isAuthenticated: () => {
-    return !!localStorage.getItem('user');
+    return !!(localStorage.getItem('token') && localStorage.getItem('user'));
   },
 };
