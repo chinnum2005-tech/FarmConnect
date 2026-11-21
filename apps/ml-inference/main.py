@@ -1,8 +1,18 @@
+import os
+import sys
+
+# Suppress Windows GUI Bad Image / critical error dialogs from unsigned DLLs (e.g. LightGBM / XGBoost under Smart App Control)
+if os.name == 'nt':
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetErrorMode(0x0001 | 0x0002 | 0x8000)
+    except Exception:
+        pass
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import health, prediction, recommendation, rag
 
-import os
 os.environ["LOKY_MAX_CPU_COUNT"] = "4" # Suppress joblib/loky CPU core warning
 
 app = FastAPI(title="AgroTrace ML Inference Service", version="1.0.0")

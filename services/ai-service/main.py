@@ -1,6 +1,14 @@
 import os
 import sys
 
+# Suppress Windows GUI Bad Image / critical error dialogs from unsigned DLLs (e.g. LightGBM / XGBoost under Smart App Control)
+if os.name == 'nt':
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetErrorMode(0x0001 | 0x0002 | 0x8000)
+    except Exception:
+        pass
+
 # Load .env file manually if exists
 env_path = os.path.join(os.path.dirname(__file__), ".env")
 if os.path.exists(env_path):
